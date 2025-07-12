@@ -1,0 +1,20 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+export default {
+  port: process.env.PORT || 3000,
+  db: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    dialect: "mssql",
+    port: process.env.DB_PORT || 1433,
+    dialectOptions: {
+      options: {
+        encrypt: true,
+        trustServerCertificate: true,
+      },
+    },
+  },
+};

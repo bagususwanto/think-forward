@@ -1,0 +1,32 @@
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../config/database.js";
+
+class HazardControlLevel extends Model {}
+
+HazardControlLevel.init(
+  {
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    option: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    score: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    createdBy: DataTypes.STRING,
+    updatedBy: DataTypes.STRING,
+  },
+  {
+    sequelize,
+    modelName: "HazardControlLevel",
+    tableName: "Hazard_Control_Levels",
+    timestamps: true,
+  }
+);
+
+export default HazardControlLevel;
