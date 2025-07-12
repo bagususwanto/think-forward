@@ -28,12 +28,19 @@ function validateSubmissionUpdate(data) {
 }
 
 export default {
-  async create(data) {
+  async create(data, req) {
     validateSubmissionCreate(data);
+    const userId = req.user.userId;
     return sequelize.transaction(async (t) => {
-      const submission = await Submission.create(data, { transaction: t });
+      const submission = await Submission.create(
+        {
+          ...data,
+          userId,
+        },
+        { transaction: t }
+      );
       await logAction({
-        userId: data.userId,
+        userId,
         action: "create",
         entity: "Submission",
         entityId: submission.id,
@@ -50,15 +57,22 @@ export default {
   async findById(id) {
     return Submission.findByPk(id);
   },
-  async update(id, data) {
+  async update(id, data, req) {
     validateSubmissionUpdate(data);
+    const userId = req.user.userId;
     return sequelize.transaction(async (t) => {
       const submission = await Submission.findByPk(id, { transaction: t });
       if (!submission) throw new Error("Submission not found");
       const previousData = submission.toJSON();
-      const updated = await submission.update(data, { transaction: t });
+      const updated = await submission.update(
+        {
+          ...data,
+          userId,
+        },
+        { transaction: t }
+      );
       await logAction({
-        userId: data.userId,
+        userId,
         action: "update",
         entity: "Submission",
         entityId: id,

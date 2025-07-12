@@ -18,7 +18,10 @@ HazardControlLevel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    createdBy: DataTypes.STRING,
+    createdBy: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     updatedBy: DataTypes.STRING,
   },
   {

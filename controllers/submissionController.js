@@ -4,7 +4,7 @@ import { successResponse } from "../middlewares/successResponse.js";
 export default {
   async create(req, res, next) {
     try {
-      const submission = await submissionService.create(req.body);
+      const submission = await submissionService.create(req.body, req);
       return successResponse(res, {
         message: "Submission created successfully",
         data: submission,
@@ -42,21 +42,14 @@ export default {
   },
   async update(req, res, next) {
     try {
-      const updated = await submissionService.update(req.params.id, req.body);
+      const updated = await submissionService.update(
+        req.params.id,
+        req.body,
+        req
+      );
       return successResponse(res, {
         message: "Submission updated successfully",
         data: updated,
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
-  async remove(req, res, next) {
-    try {
-      await submissionService.remove(req.params.id);
-      return successResponse(res, {
-        message: "Submission deleted successfully",
-        data: null,
       });
     } catch (err) {
       next(err);

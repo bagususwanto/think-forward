@@ -1,10 +1,5 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database.js";
-import {
-  SHIFT_ENUM,
-  STATUS_ENUM,
-  TYPE_ENUM,
-} from "../enums/submissionEnums.js";
 
 class Submission extends Model {}
 
@@ -19,11 +14,11 @@ Submission.init(
       allowNull: false,
     },
     type: {
-      type: DataTypes.ENUM(...TYPE_ENUM),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     shift: {
-      type: DataTypes.ENUM(...SHIFT_ENUM),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     incidentDate: {
@@ -43,7 +38,7 @@ Submission.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM(...STATUS_ENUM),
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },

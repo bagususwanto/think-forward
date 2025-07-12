@@ -22,7 +22,10 @@ AccidentLevel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    createdBy: DataTypes.STRING,
+    createdBy: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     updatedBy: DataTypes.STRING,
   },
   {
