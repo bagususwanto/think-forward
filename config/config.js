@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default {
-  port: process.env.PORT || 3000,
+  TWIIS_API_URL: process.env.TWIIS_API_URL,
+  port: process.env.PORT || 5005,
   db: {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,

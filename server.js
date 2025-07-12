@@ -4,17 +4,17 @@ import errorHandler from "./middlewares/errorHandler.js";
 import config from "./config/config.js";
 import { sequelize } from "./models/index.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
-
-// Import routes (nanti tambahkan semua route utama di sini)
-// import submissionRoutes from './routes/submissionRoutes.js';
+import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(logger);
 
+// verify token external
+app.use(verifyTokenExternal);
+
 app.use("/api/submissions", submissionRoutes);
-// Tambahkan route lain sesuai kebutuhan
 
 app.get("/", (req, res) => {
   res.json({ message: "API is running" });

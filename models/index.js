@@ -11,13 +11,13 @@ import WorkingFrequency from "./workingFrequency.js";
 import ScoreRank from "./scoreRank.js";
 
 // Relasi antar model
-Submission.hasMany(HazardAssessment, { foreignKey: "submissionId" });
+Submission.hasOne(HazardAssessment, { foreignKey: "submissionId" });
 HazardAssessment.belongsTo(Submission, { foreignKey: "submissionId" });
 
-Submission.hasMany(HazardReport, { foreignKey: "submissionId" });
+Submission.hasOne(HazardReport, { foreignKey: "submissionId" });
 HazardReport.belongsTo(Submission, { foreignKey: "submissionId" });
 
-Submission.hasMany(HazardEvaluation, { foreignKey: "submissionId" });
+Submission.hasOne(HazardEvaluation, { foreignKey: "submissionId" });
 HazardEvaluation.belongsTo(Submission, { foreignKey: "submissionId" });
 
 Submission.hasMany(Review, { foreignKey: "submissionId" });

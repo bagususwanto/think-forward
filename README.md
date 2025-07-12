@@ -47,6 +47,7 @@ RESTful API untuk manajemen pelaporan hazard, voice member, dan review berbasis 
    DB_NAME=your_db_name
    DB_HOST=localhost
    DB_PORT=1433
+   TWIIS_API_URL=http://localhost:5000/api
    ```
 3. **Jalankan server**
    ```bash
