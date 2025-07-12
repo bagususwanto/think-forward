@@ -11,16 +11,17 @@ const app = express();
 app.use(express.json());
 app.use(logger);
 
-// verify token external
-app.use(verifyTokenExternal);
-
-app.use("/api/submissions", submissionRoutes);
-
 app.get("/", (req, res) => {
-  res.json({ message: "API is running" });
+  res.json({ message: "Think-Forward API is running" });
 });
 
 app.use(errorHandler);
+
+// verify token external
+app.use(verifyTokenExternal);
+
+// routes
+app.use("/api/submissions", submissionRoutes);
 
 // Sync DB dan start server
 sequelize
