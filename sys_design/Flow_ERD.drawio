@@ -208,7 +208,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="rYI_2ZwJC1zjv7oH_HPA" name="ERD">
-    <mxGraphModel dx="1198" dy="1900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1131" dy="1859" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1199,6 +1199,27 @@
             <mxPoint x="593" y="63" as="targetPoint" />
             <Array as="points">
               <mxPoint x="730" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_qpOVNFyHd8w5P0VYWlC-1" value="action pic" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=14;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="370" y="1180" width="160" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="_qpOVNFyHd8w5P0VYWlC-2" value="Bisa oleh Diri sendiri" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="_qpOVNFyHd8w5P0VYWlC-1">
+          <mxGeometry y="26" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="_qpOVNFyHd8w5P0VYWlC-3" value="Bersama2 dalam SGA" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="_qpOVNFyHd8w5P0VYWlC-1">
+          <mxGeometry y="56" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="_qpOVNFyHd8w5P0VYWlC-4" value="Pihak lain" style="text;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=12;whiteSpace=wrap;html=1;" vertex="1" parent="_qpOVNFyHd8w5P0VYWlC-1">
+          <mxGeometry y="86" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="_qpOVNFyHd8w5P0VYWlC-5" value="" style="edgeStyle=elbowEdgeStyle;elbow=vertical;endArrow=classic;html=1;curved=0;rounded=0;endSize=8;startSize=8;fillColor=#ffe6cc;strokeColor=#d79b00;" edge="1" parent="1" source="4MyUviLPJcnwckWr-vDP-8" target="_qpOVNFyHd8w5P0VYWlC-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="383" y="1050" as="sourcePoint" />
+            <mxPoint x="593" y="1190" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="450" y="1340" />
             </Array>
           </mxGeometry>
         </mxCell>
