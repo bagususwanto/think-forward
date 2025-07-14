@@ -9,6 +9,7 @@ import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
 import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
 import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
 import workingFrequencyRoutes from "./routes/workingFrequencyRoutes.js";
+import scoreRankRoutes from "./routes/scoreRankRoutes.js";
 
 const app = express();
 const sync = { force: false };
@@ -36,6 +37,7 @@ app.use(verifyTokenExternal);
 app.use("/api/accident-levels", accidentLevelRoutes);
 app.use("/api/hazard-control-levels", hazardControlLevelRoutes);
 app.use("/api/working-frequencies", workingFrequencyRoutes);
+app.use("/api/score-ranks", scoreRankRoutes);
 
 // Sync DB dan start server
 sequelize
