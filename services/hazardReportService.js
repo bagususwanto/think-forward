@@ -19,13 +19,7 @@ export default {
     return sequelize.transaction(async () => {
       const hazardReport = await HazardReport.create({
         submissionId,
-        pattern: data.pattern,
-        source: data.source,
-        injured: data.injured,
-        cause: data.cause,
-        category: data.category,
-        accidentType: data.accidentType,
-        proof: data.proof,
+        ...data,
       });
       await logAction({
         userId,

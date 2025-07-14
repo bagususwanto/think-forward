@@ -19,11 +19,7 @@ export default {
     return sequelize.transaction(async () => {
       const hazardAssessment = await HazardAssessment.create({
         submissionId,
-        currentActivity: data.currentActivity,
-        potentialHazard: data.potentialHazard,
-        hazardReason: data.hazardReason,
-        expectedCondition: data.expectedCondition,
-        improvementSuggestion: data.improvementSuggestion,
+        ...data,
       });
       await logAction({
         userId,
