@@ -32,28 +32,27 @@ function validateSubmissionUpdate(data) {
 
 export default {
   async create(data, req) {
-    validateSubmissionCreate(data);
+    validateSubmissionCreate(data.submission);
     const userId = req.user.userId;
     return sequelize.transaction(async () => {
       const submission = await Submission.create({
+        ...data.submission,
         userId,
-        type: data.type,
-        shift: data.shift,
-        incidentDate: data.incidentDate,
-        incidentTime: data.incidentTime,
-        workProcess: data.workProcess,
-        location: data.location,
         status: "waiting review",
       });
 
       // create hazard assessment
-      await hazardAssessmentService.create(data, submission.id, userId);
+      await hazardAssessmentService.create(data.hazardAssessment, submission.id, userId);
 
       // create hazard report
-      await hazardReportService.create(data, submission.id, userId);
+      await hazardReportService.create(data.hazardReport, submission.id, userId);
 
       // create hazard evaluation
-      await hazardEvaluationService.create(data, submission.id, userId);
+      await hazardEvaluationService.create(
+        data.hazardEvaluation,
+        submission.id,
+        userId,
+      );
 
       await logAction({
         userId,
