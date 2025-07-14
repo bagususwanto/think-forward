@@ -4,6 +4,7 @@ import {
   accidentLevelUpdateSchema,
 } from "../schemas/accidentLevelSchema.js";
 import { logAction } from "./logService.js";
+import { getUserByIds } from "./externalAPIService.js";
 
 function validateAccidentLevelCreate(data) {
   const { error } = accidentLevelCreateSchema.validate(data, {
@@ -49,10 +50,29 @@ export default {
     });
   },
   async findAll() {
-    return AccidentLevel.findAll();
+    const accidentLevels = await AccidentLevel.findAll();
+    const userIds = accidentLevels.map(
+      (accidentLevel) => accidentLevel.createdBy
+    );
+    const users = await getUserByIds(userIds);
+    return accidentLevels.map((accidentLevel) => ({
+      ...accidentLevel.toJSON(),
+      createdBy: users.find((user) => user.id === accidentLevel.createdBy) || null,
+      updatedBy:
+        users.find((user) => user.id === accidentLevel.updatedBy) || null,
+    }));
   },
   async findById(id) {
-    return AccidentLevel.findByPk(id);
+    const accidentLevel = await AccidentLevel.findByPk(id);
+    const userIds = [accidentLevel.createdBy];
+    const users = await getUserByIds(userIds);
+    return {
+      ...accidentLevel.toJSON(),
+      createdBy:
+        users.find((user) => user.id === accidentLevel.createdBy) || null,
+      updatedBy:
+        users.find((user) => user.id === accidentLevel.updatedBy) || null,
+    };
   },
   async update(id, data, req) {
     validateAccidentLevelUpdate(data);

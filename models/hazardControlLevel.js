@@ -14,10 +14,10 @@ HazardControlLevel.init(
       allowNull: false,
     },
     createdBy: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    updatedBy: DataTypes.STRING,
+    updatedBy: DataTypes.INTEGER,
   },
   {
     sequelize,

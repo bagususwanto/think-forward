@@ -7,6 +7,7 @@ import config from "./config/config.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
 import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
+import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
 
 const app = express();
 const sync = { force: false };
@@ -32,6 +33,7 @@ app.use(verifyTokenExternal);
 // routes
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/accident-levels", accidentLevelRoutes);
+app.use("/api/hazard-control-levels", hazardControlLevelRoutes);
 
 // Sync DB dan start server
 sequelize
