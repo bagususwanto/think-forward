@@ -5,11 +5,6 @@ class HazardControlLevel extends Model {}
 
 HazardControlLevel.init(
   {
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
     option: {
       type: DataTypes.STRING,
       allowNull: false,

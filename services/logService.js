@@ -7,10 +7,12 @@ export async function logAction({
   entityId,
   previousData,
   newData,
-  ipAddress = null,
-  userAgent = null,
   transaction,
+  req,
 }) {
+  const ipAddress = req.ip || null;
+  const userAgent = req.headers["user-agent"] || null;
+  console.log(ipAddress, userAgent);
   await Log.create(
     {
       userId,
@@ -20,7 +22,7 @@ export async function logAction({
       previousData: previousData ? JSON.stringify(previousData) : null,
       newData: newData ? JSON.stringify(newData) : null,
       ipAddress,
-      userAgent,
+      userAgent: userAgent || null,
     },
     { transaction }
   );

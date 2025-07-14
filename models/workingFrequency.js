@@ -5,11 +5,6 @@ class WorkingFrequency extends Model {}
 
 WorkingFrequency.init(
   {
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
     option: {
       type: DataTypes.STRING,
       allowNull: false,

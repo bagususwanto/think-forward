@@ -6,8 +6,10 @@ import errorHandler from "./middlewares/errorHandler.js";
 import config from "./config/config.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
+import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
 
 const app = express();
+const sync = { force: false };
 
 app.use(
   cors({
@@ -29,13 +31,14 @@ app.use(verifyTokenExternal);
 
 // routes
 app.use("/api/submissions", submissionRoutes);
+app.use("/api/accident-levels", accidentLevelRoutes);
 
 // Sync DB dan start server
 sequelize
   .authenticate()
   .then(() => {
     console.log("Database connected!");
-    return sequelize.sync();
+    return sequelize.sync(sync);
   })
   .then(() => {
     app.listen(config.port, () => {

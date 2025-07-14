@@ -5,11 +5,6 @@ class ScoreRank extends Model {}
 
 ScoreRank.init(
   {
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
     minScore: {
       type: DataTypes.INTEGER,
       allowNull: false,
