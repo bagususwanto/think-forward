@@ -1,9 +1,5 @@
 import Joi from "joi";
-import {
-  SHIFT_ENUM,
-  STATUS_ENUM,
-  TYPE_ENUM,
-} from "../enums/submissionEnums.js";
+import { SHIFT_ENUM, TYPE_ENUM } from "../enums/submissionEnums.js";
 
 export const submissionCreateSchema = Joi.object({
   submissionNumber: Joi.string().required(),
@@ -17,9 +13,6 @@ export const submissionCreateSchema = Joi.object({
   incidentTime: Joi.string().required(),
   workProcess: Joi.string().required(),
   location: Joi.string().required(),
-  status: Joi.string()
-    .valid(...STATUS_ENUM)
-    .required(),
 });
 
 export const submissionUpdateSchema = Joi.object({
@@ -30,5 +23,4 @@ export const submissionUpdateSchema = Joi.object({
   incidentTime: Joi.string(),
   workProcess: Joi.string(),
   location: Joi.string(),
-  status: Joi.string().valid(...STATUS_ENUM),
 });

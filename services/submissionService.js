@@ -4,6 +4,9 @@ import {
   submissionUpdateSchema,
 } from "../schemas/submissionSchema.js";
 import { logAction } from "./logService.js";
+import hazardAssessmentService from "./hazardAssessmentService.js";
+import hazardReportService from "./hazardReportService.js";
+import hazardEvaluationService from "./hazardEvaluationService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {
@@ -31,14 +34,27 @@ export default {
   async create(data, req) {
     validateSubmissionCreate(data);
     const userId = req.user.userId;
-    return sequelize.transaction(async (t) => {
-      const submission = await Submission.create(
-        {
-          ...data,
-          userId,
-        },
-        { transaction: t }
-      );
+    return sequelize.transaction(async () => {
+      const submission = await Submission.create({
+        userId,
+        type: data.type,
+        shift: data.shift,
+        incidentDate: data.incidentDate,
+        incidentTime: data.incidentTime,
+        workProcess: data.workProcess,
+        location: data.location,
+        status: "waiting review",
+      });
+
+      // create hazard assessment
+      await hazardAssessmentService.create(data, submission.id, userId);
+
+      // create hazard report
+      await hazardReportService.create(data, submission.id, userId);
+
+      // create hazard evaluation
+      await hazardEvaluationService.create(data, submission.id, userId);
+
       await logAction({
         userId,
         action: "create",
@@ -46,7 +62,6 @@ export default {
         entityId: submission.id,
         previousData: null,
         newData: submission.toJSON(),
-        transaction: t,
       });
       return submission;
     });
@@ -60,17 +75,14 @@ export default {
   async update(id, data, req) {
     validateSubmissionUpdate(data);
     const userId = req.user.userId;
-    return sequelize.transaction(async (t) => {
-      const submission = await Submission.findByPk(id, { transaction: t });
+    return sequelize.transaction(async () => {
+      const submission = await Submission.findByPk(id);
       if (!submission) throw new Error("Submission not found");
       const previousData = submission.toJSON();
-      const updated = await submission.update(
-        {
-          ...data,
-          userId,
-        },
-        { transaction: t }
-      );
+      const updated = await submission.update({
+        ...data,
+        userId,
+      });
       await logAction({
         userId,
         action: "update",
@@ -78,7 +90,6 @@ export default {
         entityId: id,
         previousData,
         newData: updated.toJSON(),
-        transaction: t,
       });
       return updated;
     });

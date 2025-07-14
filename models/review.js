@@ -13,30 +13,13 @@ Review.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    actionPic: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    actionPicUserId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    actionPlan: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-    },
-    actionDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-    },
-    suggestion: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    solvedAt: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-    },
+    actionPic: DataTypes.STRING,
+    actionPicUserId: DataTypes.INTEGER,
+    actionPlan: DataTypes.DATEONLY,
+    actionDate: DataTypes.DATEONLY,
+    suggestion: DataTypes.TEXT,
+    solvedAt: DataTypes.DATEONLY,
+    proof: DataTypes.STRING,
   },
   {
     sequelize,

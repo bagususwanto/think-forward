@@ -1,13 +1,20 @@
 import express from "express";
+import cors from "cors";
+import { sequelize } from "./models/index.js";
 import logger from "./middlewares/logger.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import config from "./config/config.js";
-import { sequelize } from "./models/index.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "*",
+    credentials: true, // untuk mengakses cookie
+  })
+);
 app.use(express.json());
 app.use(logger);
 
