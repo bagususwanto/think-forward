@@ -7,4 +7,4 @@ export const hazardAssessmentCreateSchema = Joi.object({
   hazardReason: Joi.string().required(),
   expectedCondition: Joi.string().required(),
   improvementSuggestion: Joi.string(),
-});
+}).unknown(false);

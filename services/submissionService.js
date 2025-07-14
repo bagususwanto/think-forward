@@ -35,24 +35,67 @@ export default {
     validateSubmissionCreate(data.submission);
     const userId = req.user.userId;
     return sequelize.transaction(async () => {
+      // Generate nomor urut harian
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const dateStr = `${year}${month}${day}`;
+
+      // Cari submission terakhir hari ini
+      const lastSubmission = await Submission.findOne({
+        where: sequelize.where(
+          sequelize.fn("DATE", sequelize.col("createdAt")),
+          "=",
+          `${year}-${month}-${day}`
+        ),
+        order: [["submissionNumber", "DESC"]],
+      });
+
+      let nextNumber = 1;
+      if (lastSubmission && lastSubmission.submissionNumber) {
+        // Ambil urutan terakhir dari format SUB-YYYYMMDD-XXX
+        const match =
+          lastSubmission.submissionNumber.match(/SUB-\d{8}-(\d{3})$/);
+        if (match) {
+          nextNumber = parseInt(match[1], 10) + 1;
+        }
+      }
+
+      const submissionNumber = `SUB-${dateStr}-${String(nextNumber).padStart(
+        3,
+        "0"
+      )}`;
+
       const submission = await Submission.create({
         ...data.submission,
         userId,
         status: "waiting review",
+        submissionNumber,
       });
 
-      // create hazard assessment
-      await hazardAssessmentService.create(data.hazardAssessment, submission.id, userId);
+      if (data.submission.type === "hyarihatto") {
+        // create hazard assessment
+        await hazardAssessmentService.create(
+          data.hazardAssessment,
+          submission.id,
+          userId
+        );
 
-      // create hazard report
-      await hazardReportService.create(data.hazardReport, submission.id, userId);
+        // create hazard report
+        await hazardReportService.create(
+          data.hazardReport,
+          submission.id,
+          userId
+        );
 
-      // create hazard evaluation
-      await hazardEvaluationService.create(
-        data.hazardEvaluation,
-        submission.id,
-        userId,
-      );
+        // create hazard evaluation
+        await hazardEvaluationService.create(
+          data.hazardEvaluation,
+          submission.id,
+          userId
+        );
+      }
 
       await logAction({
         userId,

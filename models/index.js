@@ -1,4 +1,5 @@
 import sequelize from "../config/database.js";
+import { Op } from "sequelize";
 import Submission from "./submission.js";
 import HazardAssessment from "./hazardAssessment.js";
 import HazardReport from "./hazardReport.js";
@@ -25,6 +26,7 @@ Review.belongsTo(Submission, { foreignKey: "submissionId" });
 
 export {
   sequelize,
+  Op,
   Submission,
   HazardAssessment,
   HazardReport,
