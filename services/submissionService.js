@@ -31,9 +31,9 @@ function validateSubmissionUpdate(data) {
 }
 
 export default {
-  async create(data, req) {
+  async create(data) {
     validateSubmissionCreate(data.submission);
-    const userId = req.user.userId;
+    const userId = data.submission.userId;
     return sequelize.transaction(async () => {
       // Generate nomor urut harian
       const today = new Date();

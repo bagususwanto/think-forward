@@ -2,6 +2,7 @@ import Joi from "joi";
 import { SHIFT_ENUM, TYPE_ENUM } from "../enums/submissionEnums.js";
 
 export const submissionCreateSchema = Joi.object({
+  userId: Joi.number().required(),
   type: Joi.string()
     .valid(...TYPE_ENUM)
     .required(),
