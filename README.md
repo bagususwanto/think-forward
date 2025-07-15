@@ -116,6 +116,45 @@ RESTful API untuk manajemen pelaporan hazard, voice member, dan review berbasis 
 }
 ```
 
+## Pagination Support
+
+Endpoint GET list sekarang mendukung pagination dengan query parameter `page` dan `limit`
+
+### Cara Pakai
+
+Tambahkan query param `page` dan `limit` pada request:
+
+```
+GET /submissions?page=2&limit=5
+GET /accident-levels?page=1&limit=20
+```
+
+### Contoh Response Paginated
+
+```json
+{
+  "success": true,
+  "message": "List of accident levels",
+  "data": [
+    { "id": 1, ... },
+    { "id": 2, ... }
+  ],
+  "meta": {
+    "total": 42,
+    "page": 1,
+    "totalPages": 5,
+    "limit": 10
+  }
+}
+```
+
+- `total`: total data di database
+- `page`: halaman saat ini
+- `totalPages`: jumlah halaman
+- `limit`: jumlah data per halaman
+
+---
+
 ## Best Practice yang Digunakan
 
 - **Modular Structure**: Setiap concern dipisah per folder (service, controller, dsb)
