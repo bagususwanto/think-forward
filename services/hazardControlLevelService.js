@@ -48,19 +48,31 @@ export default {
       return hazardControlLevel;
     });
   },
-  async findAll() {
-    const hazardControlLevels = await HazardControlLevel.findAll();
-    const userIds = hazardControlLevels.map(
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await HazardControlLevel.findAndCountAll({
+      limit,
+      offset,
+      order: [["id", "ASC"]],
+    });
+    const userIds = rows.map(
       (hazardControlLevel) => hazardControlLevel.createdBy
     );
     const users = await getUserByIds(userIds);
-    return hazardControlLevels.map((hazardControlLevel) => ({
+    const data = rows.map((hazardControlLevel) => ({
       ...hazardControlLevel.toJSON(),
       createdBy:
         users.find((user) => user.id === hazardControlLevel.createdBy) || null,
       updatedBy:
         users.find((user) => user.id === hazardControlLevel.updatedBy) || null,
     }));
+    return {
+      data,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
   },
   async findById(id) {
     const hazardControlLevel = await HazardControlLevel.findByPk(id);
@@ -68,8 +80,10 @@ export default {
     const users = await getUserByIds(userIds);
     return {
       ...hazardControlLevel.toJSON(),
-      createdBy: users.find((user) => user.id === hazardControlLevel.createdBy) || null,
-      updatedBy: users.find((user) => user.id === hazardControlLevel.updatedBy) || null,
+      createdBy:
+        users.find((user) => user.id === hazardControlLevel.createdBy) || null,
+      updatedBy:
+        users.find((user) => user.id === hazardControlLevel.updatedBy) || null,
     };
   },
   async update(id, data, req) {

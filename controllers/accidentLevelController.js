@@ -16,10 +16,18 @@ export default {
   },
   async findAll(req, res, next) {
     try {
-      const accidentLevels = await accidentLevelService.findAll();
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const result = await accidentLevelService.findAll({ page, limit });
       return successResponse(res, {
         message: "List of accident levels",
-        data: accidentLevels,
+        data: result.data,
+        meta: {
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+          limit: result.limit,
+        },
       });
     } catch (err) {
       next(err);

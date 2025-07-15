@@ -19,10 +19,18 @@ export default {
   },
   async findAll(req, res, next) {
     try {
-      const hazardControlLevels = await hazardControlLevelService.findAll();
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const result = await hazardControlLevelService.findAll({ page, limit });
       return successResponse(res, {
         message: "List of hazard control levels",
-        data: hazardControlLevels,
+        data: result.data,
+        meta: {
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+          limit: result.limit,
+        },
       });
     } catch (err) {
       next(err);

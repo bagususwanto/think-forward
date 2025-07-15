@@ -48,15 +48,27 @@ export default {
       return workingFrequency;
     });
   },
-  async findAll() {
-    const workingFrequencies = await WorkingFrequency.findAll();
-    const userIds = workingFrequencies.map((wf) => wf.createdBy);
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await WorkingFrequency.findAndCountAll({
+      limit,
+      offset,
+      order: [["id", "ASC"]],
+    });
+    const userIds = rows.map((wf) => wf.createdBy);
     const users = await getUserByIds(userIds);
-    return workingFrequencies.map((wf) => ({
+    const data = rows.map((wf) => ({
       ...wf.toJSON(),
       createdBy: users.find((user) => user.id === wf.createdBy) || null,
       updatedBy: users.find((user) => user.id === wf.updatedBy) || null,
     }));
+    return {
+      data,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
   },
   async findById(id) {
     const workingFrequency = await WorkingFrequency.findByPk(id);

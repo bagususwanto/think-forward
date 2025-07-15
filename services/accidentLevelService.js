@@ -49,18 +49,29 @@ export default {
       return accidentLevel;
     });
   },
-  async findAll() {
-    const accidentLevels = await AccidentLevel.findAll();
-    const userIds = accidentLevels.map(
-      (accidentLevel) => accidentLevel.createdBy
-    );
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await AccidentLevel.findAndCountAll({
+      limit,
+      offset,
+      order: [["id", "ASC"]],
+    });
+    const userIds = rows.map((accidentLevel) => accidentLevel.createdBy);
     const users = await getUserByIds(userIds);
-    return accidentLevels.map((accidentLevel) => ({
+    const data = rows.map((accidentLevel) => ({
       ...accidentLevel.toJSON(),
-      createdBy: users.find((user) => user.id === accidentLevel.createdBy) || null,
+      createdBy:
+        users.find((user) => user.id === accidentLevel.createdBy) || null,
       updatedBy:
         users.find((user) => user.id === accidentLevel.updatedBy) || null,
     }));
+    return {
+      data,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
   },
   async findById(id) {
     const accidentLevel = await AccidentLevel.findByPk(id);

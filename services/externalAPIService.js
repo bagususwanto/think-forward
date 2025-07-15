@@ -1,4 +1,3 @@
-import config from "../config/config.js";
 import axiosInstance from "../config/axiosInstance.js";
 
 export const getUserByIds = async (ids) => {

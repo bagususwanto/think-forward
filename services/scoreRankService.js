@@ -49,15 +49,27 @@ export default {
       return scoreRank;
     });
   },
-  async findAll() {
-    const scoreRanks = await ScoreRank.findAll();
-    const userIds = scoreRanks.map((scoreRank) => scoreRank.createdBy);
+  async findAll({ page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await ScoreRank.findAndCountAll({
+      limit,
+      offset,
+      order: [["id", "ASC"]],
+    });
+    const userIds = rows.map((scoreRank) => scoreRank.createdBy);
     const users = await getUserByIds(userIds);
-    return scoreRanks.map((scoreRank) => ({
+    const data = rows.map((scoreRank) => ({
       ...scoreRank.toJSON(),
       createdBy: users.find((user) => user.id === scoreRank.createdBy) || null,
       updatedBy: users.find((user) => user.id === scoreRank.updatedBy) || null,
     }));
+    return {
+      data,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
   },
   async findById(id) {
     const scoreRank = await ScoreRank.findByPk(id);
