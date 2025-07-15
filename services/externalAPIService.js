@@ -13,14 +13,12 @@ export const getUserByIds = async (ids) => {
   }
 };
 
-export const getUseridsByOrganization = async (ids) => {
+export const getUserIdsByOrganization = async () => {
   try {
-    const response = await axiosInstance.get(`/user-ids`, {
-      params: { ids: ids.join(",") },
-    });
+    const response = await axiosInstance.get(`/user-organization`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user by ids:", error);
+    console.error("Error fetching user organization:", error);
     throw error;
   }
 };

@@ -74,7 +74,9 @@ export default {
       accidentLevel.rank.toUpperCase() + totalScoreRank.rank.toLowerCase();
 
     const hazardEvaluation = await HazardEvaluation.create({
-      ...data,
+      accidentLevel: `${accidentLevel.rank} - ${accidentLevel.option} - ${accidentLevel.score}`,
+      hazardControlLevel: `${hazardControlLevel.option} - ${hazardControlLevel.score}`,
+      workingFrequency: `${workingFrequency.option} - ${workingFrequency.score}`,
       submissionId,
       totalScore,
       rank,

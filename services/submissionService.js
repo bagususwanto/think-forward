@@ -1,4 +1,11 @@
-import { Submission, sequelize, Op } from "../models/index.js";
+import {
+  Submission,
+  sequelize,
+  Op,
+  HazardAssessment,
+  HazardReport,
+  HazardEvaluation,
+} from "../models/index.js";
 import {
   submissionCreateSchema,
   submissionUpdateSchema,
@@ -112,7 +119,12 @@ export default {
         newData: submission.toJSON(),
         req,
       });
-      return submission;
+      return {
+        submission,
+        hazardAssessment: submission.hazardAssessment,
+        hazardReport: submission.hazardReport,
+        hazardEvaluation: submission.hazardEvaluation,
+      };
     });
   },
   async findAll() {
@@ -120,6 +132,44 @@ export default {
   },
   async findById(id) {
     return Submission.findByPk(id);
+  },
+  async findByUserIds(userIds, { page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    const { count, rows } = await Submission.findAndCountAll({
+      where: {
+        userId: { [Op.in]: userIds },
+      },
+      include: [
+        {
+          model: HazardAssessment,
+        },
+        {
+          model: HazardReport,
+        },
+        {
+          model: HazardEvaluation,
+        },
+      ],
+      limit,
+      offset,
+      order: [["status", "ASC"]],
+    });
+    const users = await getUserByIds(userIds);
+
+    const submissions = rows.map((submission) => ({
+      ...submission.toJSON(),
+      hazardAssessment: submission.hazardAssessment,
+      hazardReport: submission.hazardReport,
+      hazardEvaluation: submission.hazardEvaluation,
+      user: users.find((user) => user.id === submission.userId) || null,
+    }));
+    return {
+      data: submissions,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
   },
   async update(id, data, req) {
     validateSubmissionUpdate(data);
