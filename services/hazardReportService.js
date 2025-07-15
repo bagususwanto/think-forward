@@ -14,22 +14,21 @@ function validateHazardReportCreate(data) {
 }
 
 export default {
-  async create(data, submissionId, userId) {
+  async create(data, submissionId, userId, req) {
     validateHazardReportCreate(data);
-    return sequelize.transaction(async () => {
-      const hazardReport = await HazardReport.create({
-        submissionId,
-        ...data,
-      });
-      await logAction({
-        userId,
-        action: "create",
-        entity: "HazardReport",
-        entityId: hazardReport.id,
-        previousData: null,
-        newData: hazardReport.toJSON(),
-      });
-      return hazardReport;
+    const hazardReport = await HazardReport.create({
+      submissionId,
+      ...data,
     });
+    await logAction({
+      userId,
+      action: "create",
+      entity: "HazardReport",
+      entityId: hazardReport.id,
+      previousData: null,
+      newData: hazardReport.toJSON(),
+      req,
+    });
+    return hazardReport;
   },
 };

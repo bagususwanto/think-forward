@@ -1,5 +1,4 @@
-import axios from "axios";
-import config from "../config/config.js";
+import axiosInstance from "../config/axiosInstance.js";
 
 const verifyTokenExternal = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -9,8 +8,8 @@ const verifyTokenExternal = async (req, res, next) => {
   }
 
   try {
-    const response = await axios.post(
-      `${config.TWIIS_API_URL}/verify`,
+    const response = await axiosInstance.post(
+      `/verify`,
       {},
       {
         headers: {
@@ -22,6 +21,7 @@ const verifyTokenExternal = async (req, res, next) => {
     req.user = response.data;
     next();
   } catch (err) {
+    console.log(err);
     const status = err.response?.status || 500;
     const message = err.response?.data?.message || "Token validation failed";
     return res.status(status).json({ message });

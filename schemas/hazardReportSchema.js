@@ -9,7 +9,6 @@ import {
 } from "../enums/hazardReportEnums.js";
 
 export const hazardReportCreateSchema = Joi.object({
-  submissionId: Joi.number().required(),
   pattern: Joi.string()
     .valid(...PATTERN_ENUM)
     .required(),

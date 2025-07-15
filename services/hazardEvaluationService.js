@@ -3,7 +3,6 @@ import {
   HazardControlLevel,
   WorkingFrequency,
   HazardEvaluation,
-  sequelize,
   ScoreRank,
   Op,
 } from "../models/index.js";
@@ -22,7 +21,7 @@ function validateHazardEvaluationCreate(data) {
 }
 
 export default {
-  async create(data, submissionId, userId) {
+  async create(data, submissionId, userId, req) {
     validateHazardEvaluationCreate(data);
 
     // validasi accident level id
@@ -74,22 +73,21 @@ export default {
     const rank =
       accidentLevel.rank.toUpperCase() + totalScoreRank.rank.toLowerCase();
 
-    return sequelize.transaction(async () => {
-      const hazardEvaluation = await HazardEvaluation.create({
-        ...data,
-        submissionId,
-        totalScore,
-        rank,
-      });
-      await logAction({
-        userId,
-        action: "create",
-        entity: "HazardEvaluation",
-        entityId: hazardEvaluation.id,
-        previousData: null,
-        newData: hazardEvaluation.toJSON(),
-      });
-      return hazardEvaluation;
+    const hazardEvaluation = await HazardEvaluation.create({
+      ...data,
+      submissionId,
+      totalScore,
+      rank,
     });
+    await logAction({
+      userId,
+      action: "create",
+      entity: "HazardEvaluation",
+      entityId: hazardEvaluation.id,
+      previousData: null,
+      newData: hazardEvaluation.toJSON(),
+      req,
+    });
+    return hazardEvaluation;
   },
 };

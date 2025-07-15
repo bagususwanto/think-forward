@@ -1,4 +1,4 @@
-import { Submission, sequelize } from "../models/index.js";
+import { Submission, sequelize, Op } from "../models/index.js";
 import {
   submissionCreateSchema,
   submissionUpdateSchema,
@@ -31,7 +31,7 @@ function validateSubmissionUpdate(data) {
 }
 
 export default {
-  async create(data) {
+  async create(data, req) {
     validateSubmissionCreate(data.submission);
     const userId = data.submission.userId;
     return sequelize.transaction(async () => {
@@ -43,12 +43,15 @@ export default {
       const dateStr = `${year}${month}${day}`;
 
       // Cari submission terakhir hari ini
+      const startOfDay = new Date(`${year}-${month}-${day}T00:00:00`);
+      const endOfDay = new Date(`${year}-${month}-${day}T23:59:59`);
+
       const lastSubmission = await Submission.findOne({
-        where: sequelize.where(
-          sequelize.fn("DATE", sequelize.col("createdAt")),
-          "=",
-          `${year}-${month}-${day}`
-        ),
+        where: {
+          createdAt: {
+            [Op.between]: [startOfDay, endOfDay],
+          },
+        },
         order: [["submissionNumber", "DESC"]],
       });
 
@@ -79,21 +82,24 @@ export default {
         await hazardAssessmentService.create(
           data.hazardAssessment,
           submission.id,
-          userId
+          userId,
+          req
         );
 
         // create hazard report
         await hazardReportService.create(
           data.hazardReport,
           submission.id,
-          userId
+          userId,
+          req
         );
 
         // create hazard evaluation
         await hazardEvaluationService.create(
           data.hazardEvaluation,
           submission.id,
-          userId
+          userId,
+          req
         );
       }
 
@@ -104,6 +110,7 @@ export default {
         entityId: submission.id,
         previousData: null,
         newData: submission.toJSON(),
+        req,
       });
       return submission;
     });

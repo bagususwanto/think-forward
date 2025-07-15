@@ -25,6 +25,19 @@ export default {
       next(err);
     }
   },
+  async findByOrganization(req, res, next) {
+    try {
+      const submissions = await submissionService.findByOrganization(
+        req.user.organizationId
+      );
+      return successResponse(res, {
+        message: "List of submissions by organization",
+        data: submissions,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   async findById(req, res, next) {
     try {
       const submission = await submissionService.findById(req.params.id);

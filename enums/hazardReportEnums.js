@@ -6,7 +6,12 @@ export const SOURCE_ENUM = [
   "Ergo (PAK)",
 ];
 export const INJURED_ENUM = ["Kepala", "Tangan", "Kaki", "Badan", "Lainnya"];
-export const CAUSE_ENUM = ["Lalai / Lengah", "Tergesa-gesa", "Tdk terampil"];
+export const CAUSE_ENUM = [
+  "Lalai / Lengah",
+  "Tergesa-gesa",
+  "Tdk terampil",
+  "Lelah",
+];
 export const CATEGORY_ENUM = ["Human", "Machine", "Workplace"];
 export const ACCIDENT_TYPE_ENUM = [
   "A - Terjepit",

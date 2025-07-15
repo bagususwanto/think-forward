@@ -18,7 +18,13 @@ const sequelize = new Sequelize(
     dialect: config.db.dialect,
     port: config.db.port,
     dialectOptions: config.db.dialectOptions,
-    logging: false,
+    pool: {
+      max: 5, // maksimal koneksi
+      min: 0, // minimal koneksi
+      acquire: 60000, // waktu tunggu koneksi
+      idle: 10000, // waktu tunggu koneksi
+    },
+    logging: true,
   }
 );
 

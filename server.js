@@ -16,7 +16,7 @@ const sync = { force: false };
 
 app.use(
   cors({
-    origin: "*",
+    origin: ["http://192.168.8.109:5173", "http://localhost:5173"],
     credentials: true, // untuk mengakses cookie
   })
 );

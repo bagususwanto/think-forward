@@ -15,6 +15,9 @@ export default {
       options: {
         encrypt: true,
         trustServerCertificate: true,
+        requestTimeout: 60000, // 60 seconds
+        connectionTimeout: 60000, // 60 seconds
+        commandTimeout: 60000, // 60 seconds
       },
     },
   },
