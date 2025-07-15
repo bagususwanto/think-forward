@@ -22,7 +22,6 @@ app.use(
 );
 app.use(express.json());
 app.use(logger);
-app.use(errorHandler);
 
 // routes non-protected
 app.get("/", (req, res) => {
@@ -33,11 +32,14 @@ app.use("/api/submissions", submissionRoutes);
 // verify token external
 app.use(verifyTokenExternal);
 
-// routes protected
+//==routes protected==/
+// master
 app.use("/api/accident-levels", accidentLevelRoutes);
 app.use("/api/hazard-control-levels", hazardControlLevelRoutes);
 app.use("/api/working-frequencies", workingFrequencyRoutes);
 app.use("/api/score-ranks", scoreRankRoutes);
+
+app.use(errorHandler);
 
 // Sync DB dan start server
 sequelize

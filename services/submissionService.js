@@ -70,7 +70,7 @@ export default {
       const submission = await Submission.create({
         ...data.submission,
         userId,
-        status: "waiting review",
+        status: 0,
         submissionNumber,
       });
 
