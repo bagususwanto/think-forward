@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/", submissionController.create);
 router.get("/", submissionController.findAll);
 router.get("/:id", submissionController.findById);
+router.get("/reviews", submissionController.findByUserIds);
 router.patch("/:id", submissionController.update);
 
 export default router;
