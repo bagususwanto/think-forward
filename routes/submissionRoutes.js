@@ -1,13 +1,20 @@
 import express from "express";
 import submissionController from "../controllers/submissionController.js";
 import upload from "../middlewares/uploadMiddleware.js";
+import roleMiddleware from "../middlewares/roleMiddleware.js";
+import verifyTokenExternal from "../middlewares/verifyTokenExternal.js";
 
 const router = express.Router();
 
 router.post("/", upload.single("image"), submissionController.create);
 router.get("/", submissionController.findAll);
+router.get(
+  "/reviews",
+  verifyTokenExternal,
+  roleMiddleware(["line head", "section head"]),
+  submissionController.findByUserIds
+);
 router.get("/:id", submissionController.findById);
-router.get("/reviews", submissionController.findByUserIds);
 router.patch("/:id", submissionController.update);
 
 export default router;

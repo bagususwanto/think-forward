@@ -14,6 +14,7 @@ import { logAction } from "./logService.js";
 import hazardAssessmentService from "./hazardAssessmentService.js";
 import hazardReportService from "./hazardReportService.js";
 import hazardEvaluationService from "./hazardEvaluationService.js";
+import { getUserByIds } from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {

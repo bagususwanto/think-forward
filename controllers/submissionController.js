@@ -49,7 +49,7 @@ export default {
   },
   async findByUserIds(req, res, next) {
     try {
-      const userIds = await getUserIdsByOrganization();
+      const userIds = await getUserIdsByOrganization(req);
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
       const q = req.query.q || "";

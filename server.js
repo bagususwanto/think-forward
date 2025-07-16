@@ -5,7 +5,6 @@ import logger from "./middlewares/logger.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import config from "./config/config.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
-import verifyTokenExternal from "./middlewares/verifyTokenExternal.js";
 import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
 import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
 import workingFrequencyRoutes from "./routes/workingFrequencyRoutes.js";
@@ -24,17 +23,14 @@ app.use(
 app.use(express.json());
 app.use(logger);
 
-// routes non-protected
+//==ROUTES==//
+// endpoint root
 app.get("/", (req, res) => {
   res.json({ message: "Think-Forward API is running" });
 });
-app.use("/api/submissions", submissionRoutes);
 
-// verify token external
-app.use(verifyTokenExternal);
-
-//==routes protected==/
 // processing
+app.use("/api/submissions", submissionRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 // master
@@ -45,7 +41,7 @@ app.use("/api/score-ranks", scoreRankRoutes);
 
 app.use(errorHandler);
 
-// Sync DB dan start server
+//==SYNC DB DAN START SERVER==//
 sequelize
   .authenticate()
   .then(() => {

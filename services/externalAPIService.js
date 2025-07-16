@@ -12,9 +12,13 @@ export const getUserByIds = async (ids) => {
   }
 };
 
-export const getUserIdsByOrganization = async () => {
+export const getUserIdsByOrganization = async (req) => {
   try {
-    const response = await axiosInstance.get(`/user-organization`);
+    const response = await axiosInstance.get(`/user-organization`, {
+      headers: {
+        Authorization: req.headers.authorization,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching user organization:", error);
