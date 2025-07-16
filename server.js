@@ -10,9 +10,10 @@ import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
 import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
 import workingFrequencyRoutes from "./routes/workingFrequencyRoutes.js";
 import scoreRankRoutes from "./routes/scoreRankRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 
 const app = express();
-const sync = { force: false };
+const sync = {};
 
 app.use(
   cors({
@@ -33,6 +34,9 @@ app.use("/api/submissions", submissionRoutes);
 app.use(verifyTokenExternal);
 
 //==routes protected==/
+// processing
+app.use("/api/reviews", reviewRoutes);
+
 // master
 app.use("/api/accident-levels", accidentLevelRoutes);
 app.use("/api/hazard-control-levels", hazardControlLevelRoutes);

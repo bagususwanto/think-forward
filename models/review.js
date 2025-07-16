@@ -13,8 +13,12 @@ Review.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    feedback: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     actionPic: DataTypes.STRING,
-    actionPicUserId: DataTypes.INTEGER,
+    thirdParty: DataTypes.STRING,
     actionPlan: DataTypes.DATEONLY,
     actionDate: DataTypes.DATEONLY,
     suggestion: DataTypes.TEXT,

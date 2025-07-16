@@ -88,10 +88,7 @@ export default {
     if (!scoreRank) throw new Error("ScoreRank not found");
     data.updatedBy = userId;
     return sequelize.transaction(async () => {
-      const updated = await scoreRank.update({
-        ...data,
-        rank: data.rank ? data.rank.toUpperCase() : scoreRank.rank,
-      });
+      const updated = await scoreRank.update(data);
       await logAction({
         userId,
         action: "update",

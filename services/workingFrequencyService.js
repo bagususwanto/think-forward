@@ -89,9 +89,7 @@ export default {
     if (!workingFrequency) throw new Error("WorkingFrequency not found");
     data.updatedBy = userId;
     return sequelize.transaction(async () => {
-      const updated = await workingFrequency.update({
-        ...data,
-      });
+      const updated = await workingFrequency.update(data);
       await logAction({
         userId,
         action: "update",

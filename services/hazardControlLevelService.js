@@ -93,9 +93,7 @@ export default {
     if (!hazardControlLevel) throw new Error("HazardControlLevel not found");
     data.updatedBy = userId;
     return sequelize.transaction(async () => {
-      const updated = await hazardControlLevel.update({
-        ...data,
-      });
+      const updated = await hazardControlLevel.update(data);
       await logAction({
         userId,
         action: "update",

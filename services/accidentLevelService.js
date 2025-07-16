@@ -92,10 +92,7 @@ export default {
     if (!accidentLevel) throw new Error("AccidentLevel not found");
     data.updatedBy = userId;
     return sequelize.transaction(async () => {
-      const updated = await accidentLevel.update({
-        ...data,
-        rank: data.rank.toUpperCase(),
-      });
+      const updated = await accidentLevel.update(data);
       await logAction({
         userId,
         action: "update",
