@@ -1,6 +1,7 @@
 import submissionService from "../services/submissionService.js";
 import { successResponse } from "../middlewares/successResponse.js";
 import { getUserIdsByOrganization } from "../services/externalAPIService.js";
+import fs from "fs";
 
 export default {
   async create(req, res, next) {
@@ -12,6 +13,11 @@ export default {
         status: 201,
       });
     } catch (err) {
+      if (req.file) {
+        fs.unlink(req.file.path, (unlinkErr) => {
+          if (unlinkErr) console.error("Gagal hapus file:", unlinkErr);
+        });
+      }
       next(err);
     }
   },

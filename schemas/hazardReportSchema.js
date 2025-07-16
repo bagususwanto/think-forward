@@ -27,5 +27,4 @@ export const hazardReportCreateSchema = Joi.object({
   accidentType: Joi.string()
     .valid(...ACCIDENT_TYPE_ENUM)
     .required(),
-  proof: Joi.string().required(),
 }).unknown(false);

@@ -40,6 +40,7 @@ function validateSubmissionUpdate(data) {
 export default {
   async create(data, req) {
     validateSubmissionCreate(data.submission);
+    console.log("data.submission", data.submission);
     const userId = data.submission.userId;
     return sequelize.transaction(async () => {
       // Generate nomor urut harian
@@ -79,7 +80,7 @@ export default {
 
       const submission = await Submission.create({
         ...data.submission,
-        userId,
+        userId: data.submission.userId,
         status: 0,
         submissionNumber,
       });

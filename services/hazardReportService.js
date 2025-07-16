@@ -16,8 +16,12 @@ function validateHazardReportCreate(data) {
 export default {
   async create(data, submissionId, userId, req) {
     validateHazardReportCreate(data);
+    if (!req.file) {
+      throw new Error("File proof is required");
+    }
     const hazardReport = await HazardReport.create({
       submissionId,
+      proof: req.file.path,
       ...data,
     });
     await logAction({
