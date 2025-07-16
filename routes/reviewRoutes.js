@@ -5,17 +5,17 @@ import roleMiddleware from "../middlewares/roleMiddleware.js";
 const router = express.Router();
 
 router.post(
-  "/scheduled",
+  "/plan",
   roleMiddleware(["line head"]),
   reviewController.createScheduled
 );
 router.post(
-  "/solved",
+  "/solve",
   roleMiddleware(["line head"]),
   reviewController.createSolved
 );
 router.post(
-  "/rejected",
+  "/reject",
   roleMiddleware(["line head", "section head"]),
   reviewController.createRejected
 );

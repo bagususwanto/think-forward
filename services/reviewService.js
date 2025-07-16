@@ -93,6 +93,11 @@ export default {
         userId,
       });
 
+      // update submission status
+      await submission.update({
+        status: 1,
+      });
+
       await logAction({
         userId,
         action: "create",
@@ -141,6 +146,11 @@ export default {
         userId,
       });
 
+      // update submission status
+      await submission.update({
+        status: 2,
+      });
+
       await logAction({
         userId,
         action: "create",
@@ -182,6 +192,11 @@ export default {
         feedback: "rejected",
         suggestion: data.suggestion,
         userId,
+      });
+
+      // update submission status
+      await submission.update({
+        status: 3,
       });
 
       await logAction({
@@ -230,6 +245,11 @@ export default {
         feedback: "section suggestion",
         suggestion: data.suggestion,
         userId,
+      });
+
+      // update submission status
+      await submission.update({
+        status: 3,
       });
 
       await logAction({

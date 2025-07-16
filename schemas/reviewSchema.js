@@ -14,7 +14,6 @@ export const reviewScheduledSchema = Joi.object({
 
 export const reviewSolvedSchema = Joi.object({
   submissionId: Joi.number().required(),
-  proof: Joi.string().required(),
 });
 
 export const reviewSectionSuggestionSchema = Joi.object({

@@ -2,7 +2,7 @@ import reviewService from "../services/reviewService.js";
 import { successResponse } from "../middlewares/successResponse.js";
 
 export default {
-  // Scheduled
+  // Plan
   async createScheduled(req, res, next) {
     try {
       const review = await reviewService.createScheduled(req.body, req);
@@ -16,7 +16,7 @@ export default {
     }
   },
 
-  // Solved
+  // Solve
   async createSolved(req, res, next) {
     try {
       const review = await reviewService.createSolved(req.body, req);
@@ -30,7 +30,7 @@ export default {
     }
   },
 
-  // Rejected
+  // Reject
   async createRejected(req, res, next) {
     try {
       const review = await reviewService.createRejected(req.body, req);
