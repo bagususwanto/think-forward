@@ -21,7 +21,12 @@ export default {
     try {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
-      const result = await hazardControlLevelService.findAll({ page, limit });
+      const q = req.query.q || "";
+      const result = await hazardControlLevelService.findAll({
+        page,
+        limit,
+        q,
+      });
       return successResponse(res, {
         message: "List of hazard control levels",
         data: result.data,

@@ -1,4 +1,4 @@
-import { ScoreRank, sequelize } from "../models/index.js";
+import { ScoreRank, sequelize, Op } from "../models/index.js";
 import {
   scoreRankCreateSchema,
   scoreRankUpdateSchema,
@@ -49,13 +49,28 @@ export default {
       return scoreRank;
     });
   },
-  async findAll({ page = 1, limit = 10 } = {}) {
+  async findAll({ page = 1, limit = 10, q = "" } = {}) {
     const offset = (page - 1) * limit;
+    const where = {};
+    if (q) {
+      const or = [{ rank: { [Op.like]: `%${q}%` } }];
+      if (!isNaN(q)) {
+        or.push({ minScore: Number(q) });
+        or.push({ maxScore: Number(q) });
+      }
+      where[Op.or] = or;
+    }
     const { count, rows } = await ScoreRank.findAndCountAll({
       limit,
       offset,
       order: [["id", "ASC"]],
+      where,
     });
+    if (!rows || rows.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
     const userIds = rows.map((scoreRank) => scoreRank.createdBy);
     const users = await getUserByIds(userIds);
     const data = rows.map((scoreRank) => ({

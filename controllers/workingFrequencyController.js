@@ -21,7 +21,8 @@ export default {
     try {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
-      const result = await workingFrequencyService.findAll({ page, limit });
+      const q = req.query.q || "";
+      const result = await workingFrequencyService.findAll({ page, limit, q });
       return successResponse(res, {
         message: "List of working frequencies",
         data: result.data,

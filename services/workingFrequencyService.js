@@ -1,4 +1,4 @@
-import { WorkingFrequency, sequelize } from "../models/index.js";
+import { WorkingFrequency, sequelize, Op } from "../models/index.js";
 import {
   workingFrequencyCreateSchema,
   workingFrequencyUpdateSchema,
@@ -48,13 +48,27 @@ export default {
       return workingFrequency;
     });
   },
-  async findAll({ page = 1, limit = 10 } = {}) {
+  async findAll({ page = 1, limit = 10, q = "" } = {}) {
     const offset = (page - 1) * limit;
+    const where = {};
+    if (q) {
+      const or = [{ option: { [Op.like]: `%${q}%` } }];
+      if (!isNaN(q)) {
+        or.push({ score: Number(q) });
+      }
+      where[Op.or] = or;
+    }
     const { count, rows } = await WorkingFrequency.findAndCountAll({
       limit,
       offset,
       order: [["id", "ASC"]],
+      where,
     });
+    if (!rows || rows.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
     const userIds = rows.map((wf) => wf.createdBy);
     const users = await getUserByIds(userIds);
     const data = rows.map((wf) => ({
