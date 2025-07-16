@@ -46,9 +46,11 @@ export default {
       const userIds = await getUserIdsByOrganization();
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
+      const q = req.query.q || "";
       const submissions = await submissionService.findByUserIds(userIds, {
         page,
         limit,
+        q,
       });
       return successResponse(res, {
         message: "List of submissions organization",

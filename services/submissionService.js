@@ -133,12 +133,27 @@ export default {
   async findById(id) {
     return Submission.findByPk(id);
   },
-  async findByUserIds(userIds, { page = 1, limit = 10 } = {}) {
+  async findByUserIds(userIds, { page = 1, limit = 10, q = "" } = {}) {
     const offset = (page - 1) * limit;
+    const where = {
+      userId: { [Op.in]: userIds },
+    };
+    if (q) {
+      const or = [
+        { submissionNumber: { [Op.like]: `%${q}%` } },
+        { type: { [Op.like]: `%${q}%` } },
+        { shift: { [Op.like]: `%${q}%` } },
+        { workProcess: { [Op.like]: `%${q}%` } },
+        { location: { [Op.like]: `%${q}%` } },
+      ];
+      // Cek jika q adalah tanggal valid (YYYY-MM-DD)
+      if (/^\d{4}-\d{2}-\d{2}$/.test(q)) {
+        or.push({ incidentDate: q });
+      }
+      where[Op.and] = [where, { [Op.or]: or }];
+    }
     const { count, rows } = await Submission.findAndCountAll({
-      where: {
-        userId: { [Op.in]: userIds },
-      },
+      where,
       include: [
         {
           model: HazardAssessment,
@@ -154,6 +169,11 @@ export default {
       offset,
       order: [["status", "ASC"]],
     });
+    if (!rows || rows.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
     const users = await getUserByIds(userIds);
 
     const submissions = rows.map((submission) => ({
