@@ -14,7 +14,6 @@ import { logAction } from "./logService.js";
 import hazardAssessmentService from "./hazardAssessmentService.js";
 import hazardReportService from "./hazardReportService.js";
 import hazardEvaluationService from "./hazardEvaluationService.js";
-import { getUserByIds } from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {
@@ -41,7 +40,6 @@ function validateSubmissionUpdate(data) {
 export default {
   async create(data, req) {
     validateSubmissionCreate(data.submission);
-    console.log("data.submission", data.submission);
     const userId = data.submission.userId;
     return sequelize.transaction(async () => {
       // Generate nomor urut harian
@@ -81,7 +79,7 @@ export default {
 
       const submission = await Submission.create({
         ...data.submission,
-        userId: data.submission.userId,
+        userId,
         status: 0,
         submissionNumber,
       });
@@ -135,27 +133,12 @@ export default {
   async findById(id) {
     return Submission.findByPk(id);
   },
-  async findByUserIds(userIds, { page = 1, limit = 10, q = "" } = {}) {
+  async findByUserIds(userIds, { page = 1, limit = 10 } = {}) {
     const offset = (page - 1) * limit;
-    const where = {
-      userId: { [Op.in]: userIds },
-    };
-    if (q) {
-      const or = [
-        { submissionNumber: { [Op.like]: `%${q}%` } },
-        { type: { [Op.like]: `%${q}%` } },
-        { shift: { [Op.like]: `%${q}%` } },
-        { workProcess: { [Op.like]: `%${q}%` } },
-        { location: { [Op.like]: `%${q}%` } },
-      ];
-      // Cek jika q adalah tanggal valid (YYYY-MM-DD)
-      if (/^\d{4}-\d{2}-\d{2}$/.test(q)) {
-        or.push({ incidentDate: q });
-      }
-      where[Op.and] = [where, { [Op.or]: or }];
-    }
     const { count, rows } = await Submission.findAndCountAll({
-      where,
+      where: {
+        userId: { [Op.in]: userIds },
+      },
       include: [
         {
           model: HazardAssessment,
@@ -171,11 +154,6 @@ export default {
       offset,
       order: [["status", "ASC"]],
     });
-    if (!rows || rows.length === 0) {
-      const err = new Error("Data not found");
-      err.status = 404;
-      throw err;
-    }
     const users = await getUserByIds(userIds);
 
     const submissions = rows.map((submission) => ({

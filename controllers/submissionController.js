@@ -6,7 +6,10 @@ import fs from "fs";
 export default {
   async create(req, res, next) {
     try {
-      const submission = await submissionService.create(req.body, req);
+      const submission = await submissionService.create(
+        JSON.parse(req.body),
+        req
+      );
       return successResponse(res, {
         message: "Submission created successfully",
         data: submission,
