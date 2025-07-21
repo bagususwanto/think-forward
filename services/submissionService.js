@@ -14,6 +14,7 @@ import { logAction } from "./logService.js";
 import hazardAssessmentService from "./hazardAssessmentService.js";
 import hazardReportService from "./hazardReportService.js";
 import hazardEvaluationService from "./hazardEvaluationService.js";
+import { checkUserId } from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {
@@ -39,8 +40,11 @@ function validateSubmissionUpdate(data) {
 
 export default {
   async create(data, req) {
-    validateSubmissionCreate(data.submission);
-    const userId = data.submission.userId;
+    const dataParsed = JSON.parse(data.data);
+    validateSubmissionCreate(dataParsed.submission);
+    const userId = dataParsed.submission.userId;
+    const user = await checkUserId(userId);
+    if (user.status === false) throw new Error("User not found");
     return sequelize.transaction(async () => {
       // Generate nomor urut harian
       const today = new Date();
@@ -78,16 +82,16 @@ export default {
       )}`;
 
       const submission = await Submission.create({
-        ...data.submission,
+        ...dataParsed.submission,
         userId,
         status: 0,
         submissionNumber,
       });
 
-      if (data.submission.type === "hyarihatto") {
+      if (dataParsed.submission.type === "hyarihatto") {
         // create hazard assessment
         await hazardAssessmentService.create(
-          data.hazardAssessment,
+          dataParsed.hazardAssessment,
           submission.id,
           userId,
           req
@@ -95,7 +99,7 @@ export default {
 
         // create hazard report
         await hazardReportService.create(
-          data.hazardReport,
+          dataParsed.hazardReport,
           submission.id,
           userId,
           req
@@ -103,7 +107,7 @@ export default {
 
         // create hazard evaluation
         await hazardEvaluationService.create(
-          data.hazardEvaluation,
+          dataParsed.hazardEvaluation,
           submission.id,
           userId,
           req

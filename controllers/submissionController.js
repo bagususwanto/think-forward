@@ -7,7 +7,7 @@ export default {
   async create(req, res, next) {
     try {
       const submission = await submissionService.create(
-        JSON.parse(req.body),
+        req.body,
         req
       );
       return successResponse(res, {

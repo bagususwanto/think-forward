@@ -25,3 +25,15 @@ export const getUserIdsByOrganization = async (req) => {
     throw error;
   }
 };
+
+export const checkUserId = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/check-user-id`, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error checking user id:", error);
+    throw error;
+  }
+};
