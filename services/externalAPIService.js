@@ -28,9 +28,7 @@ export const getUserIdsByOrganization = async (req) => {
 
 export const checkUserId = async (userId) => {
   try {
-    const response = await axiosInstance.get(`/check-user-id`, {
-      params: { userId },
-    });
+    const response = await axiosInstance.get(`/check-user-id/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error checking user id:", error);
