@@ -11,7 +11,8 @@ export const submissionCreateSchema = Joi.object({
     .required(),
   incidentDate: Joi.date().required(),
   incidentTime: Joi.string().required(),
-  workProcess: Joi.string().required(),
+  lineId: Joi.number().required(),
+  sectionId: Joi.number().required(),
   location: Joi.string().required(),
 }).unknown(false);
 
@@ -20,6 +21,7 @@ export const submissionUpdateSchema = Joi.object({
   shift: Joi.string().valid(...SHIFT_ENUM),
   incidentDate: Joi.date(),
   incidentTime: Joi.string(),
-  workProcess: Joi.string(),
+  lineId: Joi.number(),
+  sectionId: Joi.number(),
   location: Joi.string(),
 }).unknown(false);

@@ -14,7 +14,11 @@ import { logAction } from "./logService.js";
 import hazardAssessmentService from "./hazardAssessmentService.js";
 import hazardReportService from "./hazardReportService.js";
 import hazardEvaluationService from "./hazardEvaluationService.js";
-import { checkUserId } from "./externalAPIService.js";
+import {
+  checkLineId,
+  checkSectionId,
+  checkUserId,
+} from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {
@@ -43,8 +47,17 @@ export default {
     const dataParsed = JSON.parse(data.data);
     validateSubmissionCreate(dataParsed.submission);
     const userId = dataParsed.submission.userId;
+
+    // Check if user exists
     const user = await checkUserId(userId);
     if (user.status === false) throw new Error("User not found");
+
+    // Check if lineId and sectionId are valid
+    const line = await checkLineId(dataParsed.submission.lineId);
+    if (line.status === false) throw new Error("Line not found");
+    const section = await checkSectionId(dataParsed.submission.sectionId);
+    if (section.status === false) throw new Error("Section not found");
+
     return sequelize.transaction(async () => {
       // Generate nomor urut harian
       const today = new Date();
@@ -83,7 +96,6 @@ export default {
 
       const submission = await Submission.create({
         ...dataParsed.submission,
-        userId,
         status: 0,
         submissionNumber,
       });
@@ -137,12 +149,25 @@ export default {
   async findById(id) {
     return Submission.findByPk(id);
   },
-  async findByUserIds(userIds, { page = 1, limit = 10 } = {}) {
+  async findByOrganization(req, { page = 1, limit = 10 } = {}) {
+    const { lineId, sectionId, roleName } = req.user;
+    let whereCondition = {};
+
+    if (roleName == "line head") {
+      whereCondition = {
+        lineId,
+      };
+    }
+
+    if (roleName == "section head") {
+      whereCondition = {
+        sectionId,
+      };
+    }
+
     const offset = (page - 1) * limit;
     const { count, rows } = await Submission.findAndCountAll({
-      where: {
-        userId: { [Op.in]: userIds },
-      },
+      where: whereCondition,
       include: [
         {
           model: HazardAssessment,
@@ -158,7 +183,13 @@ export default {
       offset,
       order: [["status", "ASC"]],
     });
+
+    const userIds = rows.map((submission) => submission.userId);
+    const lineIds = rows.map((submission) => submission.lineId);
+    const sectionIds = rows.map((submission) => submission.sectionId);
     const users = await getUserByIds(userIds);
+    const lines = await getLineByIds(lineIds);
+    const sections = await getSectionByIds(sectionIds);
 
     const submissions = rows.map((submission) => ({
       ...submission.toJSON(),
@@ -166,6 +197,9 @@ export default {
       hazardReport: submission.hazardReport,
       hazardEvaluation: submission.hazardEvaluation,
       user: users.find((user) => user.id === submission.userId) || null,
+      line: lines.find((line) => line.id === submission.lineId) || null,
+      section:
+        sections.find((section) => section.id === submission.sectionId) || null,
     }));
     return {
       data: submissions,

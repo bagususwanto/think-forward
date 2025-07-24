@@ -29,8 +29,12 @@ Submission.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    workProcess: {
-      type: DataTypes.STRING,
+    lineId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    sectionId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     location: {

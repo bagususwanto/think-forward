@@ -12,7 +12,7 @@ router.get(
   "/reviews",
   verifyTokenExternal,
   roleMiddleware(["line head", "section head"]),
-  submissionController.findByUserIds
+  submissionController.findByOrganization
 );
 router.get("/:id", submissionController.findById);
 router.patch("/:id", submissionController.update);

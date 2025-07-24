@@ -55,13 +55,17 @@ function validateReviewSectionSuggestion(data) {
 export default {
   async createScheduled(data, req) {
     validateReviewScheduled(data);
-    const userId = req.user.userId;
-    const userdIdsOrganization = await getUserIdsByOrganization();
+    const { userId, roleName, lineId, sectionId } = req.user;
+
+    // check if submission exists
     const submission = await Submission.findByPk(data.submissionId);
 
     // check if user is in organization
-    if (!userdIdsOrganization.includes(submission.userId)) {
-      throw new Error("User is not in organization");
+    if (roleName === "line head" && submission.lineId !== lineId) {
+      throw new Error("User is not in the correct line");
+    }
+    if (roleName === "section head" && submission.sectionId !== sectionId) {
+      throw new Error("User is not in the correct section");
     }
 
     // check if submission exists
