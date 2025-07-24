@@ -11,7 +11,7 @@ export const submissionCreateSchema = Joi.object({
     .required(),
   incidentDate: Joi.date().required(),
   incidentTime: Joi.string().required(),
-  lineId: Joi.number().required(),
+  lineId: Joi.number().allow(null), // Optional, can be null
   sectionId: Joi.number().required(),
   location: Joi.string().required(),
 }).unknown(false);
@@ -21,7 +21,7 @@ export const submissionUpdateSchema = Joi.object({
   shift: Joi.string().valid(...SHIFT_ENUM),
   incidentDate: Joi.date(),
   incidentTime: Joi.string(),
-  lineId: Joi.number(),
+  lineId: Joi.number().allow(null), // Optional, can be null
   sectionId: Joi.number(),
   location: Joi.string(),
 }).unknown(false);

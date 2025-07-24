@@ -29,10 +29,7 @@ Submission.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    lineId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+    lineId: DataTypes.INTEGER,
     sectionId: {
       type: DataTypes.INTEGER,
       allowNull: false,

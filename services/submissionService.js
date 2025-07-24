@@ -54,8 +54,10 @@ export default {
     if (user.status === false) throw new Error("User not found");
 
     // Check if lineId and sectionId are valid
-    const line = await checkLineId(dataParsed.submission.lineId);
-    if (line.status === false) throw new Error("Line not found");
+    if (dataParsed.submission.lineId) {
+      const line = await checkLineId(dataParsed.submission.lineId);
+      if (line.status === false) throw new Error("Line not found");
+    }
     const section = await checkSectionId(dataParsed.submission.sectionId);
     if (section.status === false) throw new Error("Section not found");
 
@@ -154,13 +156,15 @@ export default {
     const { lineId, sectionId, roleName } = req.user;
     let whereCondition = {};
 
-    if (roleName == "line head") {
+    // jika roleName adalah group head dan line head
+    if (roleName === "group head" || roleName === "line head") {
       whereCondition = {
         lineId,
       };
     }
 
-    if (roleName == "section head") {
+    // jika roleName adalah section head
+    if (roleName === "section head") {
       whereCondition = {
         sectionId,
       };

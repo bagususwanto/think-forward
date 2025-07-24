@@ -1,6 +1,5 @@
 import submissionService from "../services/submissionService.js";
 import { successResponse } from "../middlewares/successResponse.js";
-import { getUserIdsByOrganization } from "../services/externalAPIService.js";
 import fs from "fs";
 
 export default {

@@ -11,7 +11,7 @@ router.get("/", submissionController.findAll);
 router.get(
   "/reviews",
   verifyTokenExternal,
-  roleMiddleware(["line head", "section head"]),
+  roleMiddleware(["group head", "line head", "section head"]),
   submissionController.findByOrganization
 );
 router.get("/:id", submissionController.findById);
