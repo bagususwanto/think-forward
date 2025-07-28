@@ -10,6 +10,7 @@ import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
 import workingFrequencyRoutes from "./routes/workingFrequencyRoutes.js";
 import scoreRankRoutes from "./routes/scoreRankRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
 
 const app = express();
@@ -39,6 +40,9 @@ app.use("/api/accident-levels", accidentLevelRoutes);
 app.use("/api/hazard-control-levels", hazardControlLevelRoutes);
 app.use("/api/working-frequencies", workingFrequencyRoutes);
 app.use("/api/score-ranks", scoreRankRoutes);
+
+// dashboard
+app.use("/api/dashboard", dashboardRoutes);
 
 // public
 app.use("/api/public", publicRoutes);
