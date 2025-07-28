@@ -152,22 +152,20 @@ export default {
   async findById(id) {
     return Submission.findByPk(id);
   },
-  async findByOrganization(req, { page = 1, limit = 10 } = {}) {
+  async findByOrganization(req, { page = 1, limit = 10, q } = {}) {
     const { lineId, sectionId, roleName } = req.user;
-    let whereCondition = {};
+    let whereCondition = {
+      type: q.type || "",
+    };
 
     // jika roleName adalah group head dan line head
     if (roleName === "group head" || roleName === "line head") {
-      whereCondition = {
-        lineId,
-      };
+      whereCondition.lineId = lineId;
     }
 
     // jika roleName adalah section head
     if (roleName === "section head") {
-      whereCondition = {
-        sectionId,
-      };
+      whereCondition.sectionId = sectionId;
     }
 
     const offset = (page - 1) * limit;
