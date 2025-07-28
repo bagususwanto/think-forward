@@ -2,10 +2,10 @@ import reviewService from "../services/reviewService.js";
 import { successResponse } from "../middlewares/successResponse.js";
 
 export default {
-  // Plan
-  async createScheduled(req, res, next) {
+  // Counter measure
+  async createCounterMeasure(req, res, next) {
     try {
-      const review = await reviewService.createScheduled(req.body, req);
+      const review = await reviewService.createCounterMeasure(req.body, req);
       return successResponse(res, {
         message: "Review created successfully",
         data: review,

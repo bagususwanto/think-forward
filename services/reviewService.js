@@ -1,15 +1,13 @@
 import { sequelize, Review, Submission } from "../models/index.js";
 import {
-  reviewScheduledSchema,
+  reviewCounterMeasureSchema,
   reviewSolvedSchema,
   reviewRejectedSchema,
-  reviewSectionSuggestionSchema,
 } from "../schemas/reviewSchema.js";
-import { getUserIdsByOrganization } from "./externalAPIService.js";
 import { logAction } from "./logService.js";
 
-function validateReviewScheduled(data) {
-  const { error } = reviewScheduledSchema.validate(data, {
+function validateReviewCounterMeasure(data) {
+  const { error } = reviewCounterMeasureSchema.validate(data, {
     abortEarly: false,
   });
   if (error) {
@@ -41,36 +39,25 @@ function validateReviewRejected(data) {
   }
 }
 
-function validateReviewSectionSuggestion(data) {
-  const { error } = reviewSectionSuggestionSchema.validate(data, {
-    abortEarly: false,
-  });
-  if (error) {
-    const err = new Error("Validation error");
-    err.details = error.details.map((d) => d.message);
-    throw err;
-  }
-}
-
 export default {
-  async createScheduled(data, req) {
-    validateReviewScheduled(data);
+  async createCounterMeasure(data, req) {
+    validateReviewCounterMeasure(data);
     const { userId, roleName, lineId, sectionId } = req.user;
 
     // check if submission exists
     const submission = await Submission.findByPk(data.submissionId);
 
-    // check if user is in organization
-    if (roleName === "line head" && submission.lineId !== lineId) {
-      throw new Error("User is not in the correct line");
-    }
-    if (roleName === "section head" && submission.sectionId !== sectionId) {
-      throw new Error("User is not in the correct section");
-    }
-
     // check if submission exists
     if (!submission) {
       throw new Error("Submission not found");
+    }
+
+    // check if user is in organization
+    if (roleName === "line head" && submission.lineId !== lineId) {
+      throw new Error("You are not in the correct organization");
+    }
+    if (roleName === "section head" && submission.sectionId !== sectionId) {
+      throw new Error("You are not in the correct organization");
     }
 
     // check if submission is pending
@@ -78,22 +65,16 @@ export default {
       throw new Error("Submission is not pending");
     }
 
-    // check if submission is already scheduled
+    // check if submission is already counter-measured
     if (submission.status === 1) {
-      throw new Error("Submission is already scheduled");
+      throw new Error("Submission is already counter-measured");
     }
 
     // create review
     return sequelize.transaction(async () => {
       const review = await Review.create({
         ...data,
-        submissionId: submission.id,
-        feedback: "scheduled",
-        actionPic: data.actionPic,
-        thirdParty: data.thirdParty,
-        actionPlan: data.actionPlan,
-        actionDate: data.actionDate,
-        suggestion: data.suggestion,
+        feedback: "counter-measured",
         userId,
       });
 
@@ -116,18 +97,20 @@ export default {
   },
   async createSolved(data, req) {
     validateReviewSolved(data);
-    const userId = req.user.userId;
-    const userdIdsOrganization = await getUserIdsByOrganization();
+    const { userId, roleName, lineId, sectionId } = req.user;
     const submission = await Submission.findByPk(data.submissionId);
-
-    // check if user is in organization
-    if (!userdIdsOrganization.includes(submission.userId)) {
-      throw new Error("User is not in organization");
-    }
 
     // check if submission exists
     if (!submission) {
       throw new Error("Submission not found");
+    }
+
+    // check if user is in organization
+    if (roleName === "line head" && submission.lineId !== lineId) {
+      throw new Error("You are not in the correct organization");
+    }
+    if (roleName === "section head" && submission.sectionId !== sectionId) {
+      throw new Error("You are not in the correct organization");
     }
 
     // check if submission is scheduled
@@ -144,7 +127,6 @@ export default {
     return sequelize.transaction(async () => {
       const review = await Review.create({
         ...data,
-        submissionId: submission.id,
         feedback: "solved",
         proof: data.proof,
         userId,
@@ -169,84 +151,37 @@ export default {
   },
   async createRejected(data, req) {
     validateReviewRejected(data);
-    const userId = req.user.userId;
-    const userdIdsOrganization = await getUserIdsByOrganization();
+    const { userId, roleName, lineId, sectionId } = req.user;
     const submission = await Submission.findByPk(data.submissionId);
-
-    // check if user is in organization
-    if (!userdIdsOrganization.includes(submission.userId)) {
-      throw new Error("User is not in organization");
-    }
 
     // check if submission exists
     if (!submission) {
       throw new Error("Submission not found");
+    }
+
+    // check if user is in organization
+    if (roleName === "line head" && submission.lineId !== lineId) {
+      throw new Error("You are not in the correct organization");
+    }
+    if (roleName === "section head" && submission.sectionId !== sectionId) {
+      throw new Error("You are not in the correct organization");
     }
 
     // check if submission is already rejected
-    if (submission.status === 4) {
+    if (submission.status === 3) {
       throw new Error("Submission is already rejected");
     }
 
-    // create review
-    return sequelize.transaction(async () => {
-      const review = await Review.create({
-        ...data,
-        submissionId: submission.id,
-        feedback: "rejected",
-        suggestion: data.suggestion,
-        userId,
-      });
-
-      // update submission status
-      await submission.update({
-        status: 3,
-      });
-
-      await logAction({
-        userId,
-        action: "create",
-        entity: "Review",
-        entityId: review.id,
-        previousData: null,
-        newData: review.toJSON(),
-        req,
-      });
-      return review;
-    });
-  },
-  async createSectionSuggestion(data, req) {
-    validateReviewSectionSuggestion(data);
-    const userId = req.user.userId;
-    const userdIdsOrganization = await getUserIdsByOrganization();
-    const submission = await Submission.findByPk(data.submissionId);
-
-    // check if user is in organization
-    if (!userdIdsOrganization.includes(submission.userId)) {
-      throw new Error("User is not in organization");
-    }
-
-    // check if submission exists
-    if (!submission) {
-      throw new Error("Submission not found");
-    }
-
     // check if submission is solved
-    if (submission.status !== 2) {
-      throw new Error("Submission is not solved");
-    }
-
-    // check if submission is already section suggestion
-    if (submission.status === 3) {
-      throw new Error("Submission is already section suggestion");
+    if (submission.status === 2) {
+      throw new Error("Submission is already solved");
     }
 
     // create review
     return sequelize.transaction(async () => {
       const review = await Review.create({
         ...data,
-        submissionId: submission.id,
-        feedback: "section suggestion",
+        feedback: "rejected",
         suggestion: data.suggestion,
         userId,
       });

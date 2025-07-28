@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { ACTION_PIC_ENUM } from "../enums/reviewEnums.js";
 
-export const reviewScheduledSchema = Joi.object({
+export const reviewCounterMeasureSchema = Joi.object({
   submissionId: Joi.number().required(),
   actionPic: Joi.string()
     .valid(...ACTION_PIC_ENUM)
@@ -14,11 +14,6 @@ export const reviewScheduledSchema = Joi.object({
 
 export const reviewSolvedSchema = Joi.object({
   submissionId: Joi.number().required(),
-});
-
-export const reviewSectionSuggestionSchema = Joi.object({
-  submissionId: Joi.number().required(),
-  suggestion: Joi.string().required(),
 });
 
 export const reviewRejectedSchema = Joi.object({
