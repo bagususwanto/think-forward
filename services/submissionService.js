@@ -208,7 +208,43 @@ export default {
     };
   },
   async findById(id) {
-    return Submission.findByPk(id);
+    const rows = await Submission.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: HazardAssessment,
+        },
+        {
+          model: HazardReport,
+        },
+        {
+          model: HazardEvaluation,
+        },
+      ],
+    });
+
+    if (!rows || rows.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
+
+    const userIds = rows.userId ? [rows.userId] : [];
+    const lineIds = rows.lineId ? [rows.lineId] : [];
+    const sectionIds = rows.sectionId ? [rows.sectionId] : [];
+    const users = await getUserByIds(userIds);
+    const lines = await getLineByIds(lineIds);
+    const sections = await getSectionByIds(sectionIds);
+    const data = {
+      ...rows.toJSON(),
+      user: users.find((user) => user.id === rows.userId) || null,
+      line: lines.find((line) => line.id === rows.lineId) || null,
+      section:
+        sections.find((section) => section.id === rows.sectionId) || null,
+    };
+    return data;
   },
   async findByOrganization(req, { page = 1, limit = 10, q } = {}) {
     const { lineId, sectionId, roleName } = req.user;
