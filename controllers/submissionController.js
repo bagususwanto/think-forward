@@ -22,10 +22,24 @@ export default {
   },
   async findAll(req, res, next) {
     try {
-      const submissions = await submissionService.findAll();
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const q = req.query.q || "";
+      const result = await submissionService.findAll({
+        page,
+        limit,
+        q,
+        req,
+      });
       return successResponse(res, {
-        message: "List of submissions",
-        data: submissions,
+        message: "List of recent submissions",
+        data: result.data,
+        meta: {
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+          limit: result.limit,
+        },
       });
     } catch (err) {
       next(err);
