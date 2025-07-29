@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import { Op, Submission } from "../models/index.js";
 import { accidentLevelCreateSchema } from "../schemas/accidentLevelSchema.js";
 import { getLineByIds, getUserByIds } from "./externalAPIService.js";
@@ -16,27 +17,33 @@ function validateAccidentLevelCreate(data) {
 export default {
   async findAllGroupedByStatus(req, q) {
     const sectionId = req.user.sectionId;
-    const { type, period } = q;
+    const { type, year, month } = q;
+    let whereCondition = {
+      type: type || "",
+      sectionId,
+    };
+
+    // Tambahkan kondisi untuk tahun dan bulan jika ada
+    if (year) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-01-01`),
+        [Op.lte]: new Date(`${year}-12-31`),
+      };
+    }
+    if (month) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-${month}-01`),
+        [Op.lte]: new Date(`${year}-${month}-31`),
+      };
+    }
 
     // Hitung total keseluruhan data (tanpa group)
     const total = await Submission.count({
-      where: {
-        type: type || "",
-        createdAt: {
-          [Op.gte]: period ? new Date(period) : new Date(),
-        },
-        sectionId,
-      },
+      where: whereCondition,
     });
 
     const result = await Submission.findAll({
-      where: {
-        type: type || "",
-        createdAt: {
-          [Op.gte]: period ? new Date(period) : new Date(),
-        },
-        sectionId,
-      },
+      where: whereCondition,
       attributes: [
         "status",
         [
@@ -58,16 +65,28 @@ export default {
   },
   async findAllGroupedByLine(req, q) {
     const sectionId = req.user.sectionId;
-    const { type, period } = q;
+    const { type, year, month } = q;
+    let whereCondition = {
+      type: type || "",
+      sectionId,
+    };
+
+    // Tambahkan kondisi untuk tahun dan bulan jika ada
+    if (year) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-01-01`),
+        [Op.lte]: new Date(`${year}-12-31`),
+      };
+    }
+    if (month) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-${month}-01`),
+        [Op.lte]: new Date(`${year}-${month}-31`),
+      };
+    }
 
     const result = await Submission.findAll({
-      where: {
-        type: type || "",
-        createdAt: {
-          [Op.gte]: period ? new Date(period) : new Date(),
-        },
-        sectionId,
-      },
+      where: whereCondition,
       attributes: [
         "lineId",
         [
