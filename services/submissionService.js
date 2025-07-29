@@ -18,7 +18,9 @@ import {
   checkLineId,
   checkSectionId,
   checkUserId,
+  getLineByIds,
   getSectionByIds,
+  getUserByIds,
 } from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {

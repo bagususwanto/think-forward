@@ -12,6 +12,18 @@ export const getUserByIds = async (ids) => {
   }
 };
 
+export const getUserIdsByNoregOrName = async (q) => {
+  try {
+    const response = await axiosInstance.get(`/user-noreg-name`, {
+      params: { q },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user by ids:", error);
+    throw error;
+  }
+};
+
 export const getLineByIds = async (ids) => {
   try {
     const response = await axiosInstance.get(`/line-ids`, {

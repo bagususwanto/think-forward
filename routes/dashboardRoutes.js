@@ -10,7 +10,12 @@ router.use(
   roleMiddleware(["super admin", "section head", "line head", "group head"])
 );
 
-router.get("/report/by-status", dashboardController.findAllGroupedByStatus);
-router.get("/report/by-line", dashboardController.findAllGroupedByLine);
+router.get("/by-status", dashboardController.findAllGroupedByStatus);
+router.get("/by-line", dashboardController.findAllGroupedByLine);
+router.get(
+  "/by-accident-type",
+  dashboardController.findAllGroupedByAccidentType
+);
+router.get("/recent", dashboardController.findAllRecent);
 
 export default router;
