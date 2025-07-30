@@ -24,11 +24,11 @@ export default {
     try {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
-      const q = req.query.q || "";
+      const query = req.query || "";
       const result = await submissionService.findAll({
         page,
         limit,
-        q,
+        query,
         req,
       });
       return successResponse(res, {
@@ -64,11 +64,11 @@ export default {
     try {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
-      const q = req.query || "";
+      const query = req.query || "";
       const submissions = await submissionService.findByOrganization(req, {
         page,
         limit,
-        q,
+        query,
       });
       return successResponse(res, {
         message: "List of submissions organization",
@@ -94,6 +94,24 @@ export default {
       return successResponse(res, {
         message: "Submission updated successfully",
         data: updated,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+  async findAllGroupedByUserId(req, res, next) {
+    try {
+      const query = req.query || "";
+      const result = await submissionService.findAllGroupedByUserId(req, query);
+      return successResponse(res, {
+        message: "Submission grouped by user retrieved successfully",
+        data: result.data,
+        // meta: {
+        //   total: submissions.total,
+        //   page: submissions.page,
+        //   totalPages: submissions.totalPages,
+        //   limit: submissions.limit,
+        // },
       });
     } catch (err) {
       next(err);

@@ -16,5 +16,6 @@ router.get(
   "/by-accident-type",
   dashboardController.findAllGroupedByAccidentType
 );
+router.get("/recents", dashboardController.findAll);
 
 export default router;

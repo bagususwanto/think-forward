@@ -14,6 +14,12 @@ router.get(
   roleMiddleware(["group head", "line head", "section head"]),
   submissionController.findByOrganization
 );
+router.get(
+  "/test",
+  verifyTokenExternal,
+  roleMiddleware(["group head", "line head", "section head"]),
+  submissionController.findAllGroupedByUserId
+);
 router.get("/:id", submissionController.findById);
 router.patch("/:id", submissionController.update);
 

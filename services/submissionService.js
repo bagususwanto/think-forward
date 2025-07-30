@@ -21,6 +21,7 @@ import {
   getLineByIds,
   getSectionByIds,
   getUserByIds,
+  getUserIdsByNoregOrName,
 } from "./externalAPIService.js";
 
 function validateSubmissionCreate(data) {
@@ -148,22 +149,39 @@ export default {
       };
     });
   },
-  async findAll({ page = 1, limit = 10, q = "", req } = {}) {
-    const sectionId = req.user.sectionId;
+  async findAll({ page = 1, limit = 10, query = "", req } = {}) {
+    const sectionId = req.user.sectionId || null;
+    const { year, month, q } = query;
     const offset = (page - 1) * limit;
-    const where = {
-      sectionId,
-    };
+    let whereCondition = {};
+
+    if (sectionId) {
+      whereCondition.sectionId = sectionId;
+    }
+
+    // Tambahkan kondisi untuk tahun dan bulan jika ada
+    if (year) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-01-01`),
+        [Op.lte]: new Date(`${year}-12-31`),
+      };
+    }
+    if (month) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-${month}-01`),
+        [Op.lte]: new Date(`${year}-${month}-31`),
+      };
+    }
 
     if (q) {
       const userIds = await getUserIdsByNoregOrName(q);
-      where.userId = {
+      whereCondition.userId = {
         [Op.in]: userIds,
       };
     }
 
     const { count, rows } = await Submission.findAndCountAll({
-      where,
+      where: whereCondition,
       include: [
         {
           model: HazardAssessment,
@@ -246,10 +264,11 @@ export default {
     };
     return data;
   },
-  async findByOrganization(req, { page = 1, limit = 10, q } = {}) {
+  async findByOrganization(req, { page = 1, limit = 10, query } = {}) {
     const { lineId, sectionId, roleName } = req.user;
+    const { type, q } = query;
     let whereCondition = {
-      type: q.type || "",
+      type: type || "",
     };
 
     // jika roleName adalah group head dan line head
@@ -260,6 +279,13 @@ export default {
     // jika roleName adalah section head
     if (roleName === "section head") {
       whereCondition.sectionId = sectionId;
+    }
+
+    if (q) {
+      const userIds = await getUserIdsByNoregOrName(q);
+      whereCondition.userId = {
+        [Op.in]: userIds,
+      };
     }
 
     const offset = (page - 1) * limit;
@@ -278,7 +304,10 @@ export default {
       ],
       limit,
       offset,
-      order: [["status", "ASC"]],
+      order: [
+        ["status", "ASC"],
+        ["id", "ASC"],
+      ],
     });
 
     const userIds = rows.map((submission) => submission.userId);
@@ -485,6 +514,54 @@ export default {
 
     return {
       data: result,
+    };
+  },
+  async findAllGroupedByUserId(req, query) {
+    const sectionId = req.user.sectionId;
+    const { type, q } = query;
+    let whereCondition = {
+      type: type || "",
+      sectionId,
+    };
+
+    // Tambahkan kondisi untuk userId jika ada
+    if (q) {
+      const userIds = await getUserIdsByNoregOrName(q);
+      whereCondition.userId = {
+        [Op.in]: userIds,
+      };
+    }
+
+    // const offset = (page - 1) * limit;
+    const result = await Submission.findAll({
+      where: whereCondition,
+      attributes: [
+        "userId",
+        "incidentDate",
+        [
+          Submission.sequelize.fn("COUNT", Submission.sequelize.col("userId")),
+          "count",
+        ],
+      ],
+      group: ["userId", "incidentDate"],
+    });
+
+    if (!result || result.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
+
+    // const lineIds = result.map((item) => item.lineId);
+    // const lines = await getLineByIds(lineIds);
+
+    const data = result.map((item) => ({
+      ...item.toJSON(),
+      // line: lines.find((line) => line.id === item.lineId) || null,
+    }));
+
+    return {
+      data,
     };
   },
 };
