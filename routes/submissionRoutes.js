@@ -7,7 +7,7 @@ import verifyTokenExternal from "../middlewares/verifyTokenExternal.js";
 const router = express.Router();
 
 router.post("/", upload.single("image"), submissionController.create);
-router.get("/", submissionController.findAll);
+router.get("/", verifyTokenExternal, submissionController.findAll);
 router.get(
   "/reviews",
   verifyTokenExternal,
