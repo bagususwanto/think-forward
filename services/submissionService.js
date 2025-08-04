@@ -6,6 +6,7 @@ import {
   HazardReport,
   HazardEvaluation,
   Review,
+  VoiceMember,
 } from "../models/index.js";
 import {
   submissionCreateSchema,
@@ -219,17 +220,6 @@ export default {
 
     const { count, rows } = await Submission.findAndCountAll({
       where: whereCondition,
-      include: [
-        {
-          model: HazardAssessment,
-        },
-        {
-          model: HazardReport,
-        },
-        {
-          model: HazardEvaluation,
-        },
-      ],
       limit,
       offset,
       order: [["id", order || "DESC"]],
@@ -268,6 +258,9 @@ export default {
         id,
       },
       include: [
+        {
+          model: VoiceMember,
+        },
         {
           model: HazardAssessment,
         },
