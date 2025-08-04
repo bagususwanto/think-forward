@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const hazardAssessmentCreateSchema = Joi.object({
+export const voiceMemberCreateSchema = Joi.object({
   currentActivity: Joi.string().required(),
   issue: Joi.string().required(),
   expectedCondition: Joi.string().required(),
