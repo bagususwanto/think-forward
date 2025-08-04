@@ -10,6 +10,7 @@ import AccidentLevel from "./accidentLevel.js";
 import HazardControlLevel from "./hazardControlLevel.js";
 import WorkingFrequency from "./workingFrequency.js";
 import ScoreRank from "./scoreRank.js";
+import VoiceMember from "./voiceMember.js";
 
 // Relasi antar model
 Submission.hasOne(HazardAssessment, { foreignKey: "submissionId" });
@@ -24,6 +25,9 @@ HazardEvaluation.belongsTo(Submission, { foreignKey: "submissionId" });
 Submission.hasMany(Review, { foreignKey: "submissionId" });
 Review.belongsTo(Submission, { foreignKey: "submissionId" });
 
+Submission.hasOne(VoiceMember, { foreignKey: "submissionId" });
+VoiceMember.belongsTo(Submission, { foreignKey: "submissionId" });
+
 export {
   sequelize,
   Op,
@@ -37,4 +41,5 @@ export {
   HazardControlLevel,
   WorkingFrequency,
   ScoreRank,
+  VoiceMember,
 };

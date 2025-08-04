@@ -24,6 +24,7 @@ import {
   getUserByIds,
   getUserIdsByNoregOrName,
 } from "./externalAPIService.js";
+import voiceMemberService from "./voiceMemberService.js";
 
 function validateSubmissionCreate(data) {
   const { error } = submissionCreateSchema.validate(data, {
@@ -131,6 +132,14 @@ export default {
           userId,
           req
         );
+      } else if (dataParsed.submission.type === "voice member") {
+        // create voice member
+        await voiceMemberService.create(
+          dataParsed.voiceMember,
+          submission.id,
+          userId,
+          req
+        );
       }
 
       await logAction({
@@ -158,11 +167,15 @@ export default {
     const offset = (page - 1) * limit;
     let whereCondition = {};
 
-    if (sectionId) {
-      whereCondition.sectionId = sectionId;
-    }
+    if (
+      roleName === "section head" ||
+      roleName === "line head" ||
+      roleName === "group head"
+    ) {
+      if (sectionId) {
+        whereCondition.sectionId = sectionId;
+      }
 
-    if (roleName === "line head") {
       if (lineId) {
         whereCondition.lineId = lineId;
       }

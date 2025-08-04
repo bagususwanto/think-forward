@@ -1,4 +1,4 @@
-import { HazardAssessment, sequelize } from "../models/index.js";
+import { HazardAssessment } from "../models/index.js";
 import { hazardAssessmentCreateSchema } from "../schemas/hazardAssessmentSchema.js";
 import { logAction } from "./logService.js";
 
