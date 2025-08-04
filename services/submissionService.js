@@ -162,7 +162,7 @@ export default {
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
     const { sectionId, lineId, roleName } = req.user || null;
-    const { type, status, year, month, q } = query;
+    const { type, status, year, month, q, shift } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
@@ -174,6 +174,10 @@ export default {
 
     if (status) {
       whereCondition.status = status;
+    }
+
+    if (shift) {
+      whereCondition.shift = shift;
     }
 
     if (
