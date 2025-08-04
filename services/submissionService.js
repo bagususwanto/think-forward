@@ -5,6 +5,7 @@ import {
   HazardAssessment,
   HazardReport,
   HazardEvaluation,
+  Review,
 } from "../models/index.js";
 import {
   submissionCreateSchema,
@@ -150,7 +151,7 @@ export default {
     });
   },
   async findAll({ page = 1, limit = 10, query = "", req } = {}) {
-    const sectionId = req.user.sectionId || null;
+    const sectionId = req.user?.sectionId || null;
     const { year, month, q } = query;
     const offset = (page - 1) * limit;
     let whereCondition = {};
@@ -212,10 +213,10 @@ export default {
     const sections = await getSectionByIds(sectionIds);
     const data = rows.map((submission) => ({
       ...submission.toJSON(),
-      user: users.find((user) => user.id === submission.userId) || null,
       line: lines.find((line) => line.id === submission.lineId) || null,
       section:
         sections.find((section) => section.id === submission.sectionId) || null,
+      user: users.find((user) => user.id === submission.userId) || null,
     }));
     return {
       data,
@@ -240,6 +241,9 @@ export default {
         {
           model: HazardEvaluation,
         },
+        {
+          model: Review,
+        },
       ],
     });
 
@@ -257,10 +261,10 @@ export default {
     const sections = await getSectionByIds(sectionIds);
     const data = {
       ...rows.toJSON(),
-      user: users.find((user) => user.id === rows.userId) || null,
       line: lines.find((line) => line.id === rows.lineId) || null,
       section:
         sections.find((section) => section.id === rows.sectionId) || null,
+      user: users.find((user) => user.id === rows.userId) || null,
     };
     return data;
   },
@@ -403,7 +407,7 @@ export default {
     }
 
     return {
-      data: { ...result, total },
+      data: { grouped: result, total },
     };
   },
   async findAllGroupedByLine(req, q) {

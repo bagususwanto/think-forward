@@ -4,6 +4,7 @@ import { sequelize } from "./models/index.js";
 import logger from "./middlewares/logger.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import config from "./config/config.js";
+import path from "path";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import accidentLevelRoutes from "./routes/accidentLevelRoutes.js";
 import hazardControlLevelRoutes from "./routes/hazardControlLevelRoutes.js";
@@ -18,12 +19,26 @@ const sync = {};
 
 app.use(
   cors({
-    origin: ["http://192.168.8.3:5173", "http://localhost:5173"],
+    origin: [
+      "http://192.168.8.3:5173",
+      "http://192.168.8.7:5173",
+      "http://localhost:5173",
+      "http://192.168.8.24:3001",
+    ],
     credentials: true, // untuk mengakses cookie
   })
 );
 app.use(express.json());
 app.use(logger);
+
+// Mengambil path direktori saat ini dan menghilangkan duplicate C:
+let __dirname = path.dirname(new URL(import.meta.url).pathname);
+if (process.platform === "win32") {
+  __dirname = __dirname.substring(1); // Removes extra leading slash on Windows
+}
+
+// Mengatur path untuk menyimpan gambar produk
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //==ROUTES==//
 // endpoint root

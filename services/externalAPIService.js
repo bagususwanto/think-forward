@@ -1,6 +1,11 @@
 import axiosInstance from "../config/axiosInstance.js";
 
 export const getUserByIds = async (ids) => {
+  // bersihkan nilai yg null atau undefined
+  ids = ids.filter((id) => id !== null && id !== undefined);
+  if (ids.length === 0) {
+    return [];
+  }
   try {
     const response = await axiosInstance.get(`/user-ids`, {
       params: { ids: ids.join(",") },
@@ -25,6 +30,11 @@ export const getUserIdsByNoregOrName = async (q) => {
 };
 
 export const getLineByIds = async (ids) => {
+  // bersihkan nilai yg null atau undefined
+  ids = ids.filter((id) => id !== null && id !== undefined);
+  if (ids.length === 0) {
+    return [];
+  }
   try {
     const response = await axiosInstance.get(`/line-ids`, {
       params: { ids: ids.join(",") },
