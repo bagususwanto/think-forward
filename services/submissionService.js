@@ -151,7 +151,7 @@ export default {
     });
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
-    const { sectionId, lineId, roleName } = req.user?.sectionId || null;
+    const { sectionId, lineId, roleName } = req.user || null;
     const { year, month, q } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
