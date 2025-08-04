@@ -41,6 +41,18 @@ export default {
       next(err);
     }
   },
+  async findAllGroupedByUserId(req, res, next) {
+    try {
+      const query = req.query || "";
+      const result = await submissionService.findAllGroupedByUserId(req, query);
+      return successResponse(res, {
+        message: "Submission grouped by user retrieved successfully",
+        data: result.data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   async findAll(req, res, next) {
     try {
       const page = parseInt(req.query.page, 10) || 1;

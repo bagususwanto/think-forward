@@ -101,22 +101,4 @@ export default {
       next(err);
     }
   },
-  async findAllGroupedByUserId(req, res, next) {
-    try {
-      const query = req.query || "";
-      const result = await submissionService.findAllGroupedByUserId(req, query);
-      return successResponse(res, {
-        message: "Submission grouped by user retrieved successfully",
-        data: result.data,
-        // meta: {
-        //   total: submissions.total,
-        //   page: submissions.page,
-        //   totalPages: submissions.totalPages,
-        //   limit: submissions.limit,
-        // },
-      });
-    } catch (err) {
-      next(err);
-    }
-  },
 };
