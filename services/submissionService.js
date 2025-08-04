@@ -161,11 +161,19 @@ export default {
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
     const { sectionId, lineId, roleName } = req.user || null;
-    const { year, month, q } = query;
+    const { type, status, year, month, q } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
     let whereCondition = {};
+
+    if (type) {
+      whereCondition.type = type;
+    }
+
+    if (status) {
+      whereCondition.status = status;
+    }
 
     if (
       roleName === "section head" ||
