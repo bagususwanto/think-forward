@@ -162,7 +162,7 @@ export default {
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
     const { sectionId, lineId, roleName } = req.user || null;
-    const { type, status, q, shift, startDate, endDate } = query;
+    const { type, status, year, month, q, shift, startDate, endDate } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
@@ -201,7 +201,21 @@ export default {
       whereCondition.lineId = lineIdQuery;
     }
 
-    // Tambahkan kondisi untuk date
+    // Tambahkan kondisi untuk tahun dan bulan jika ada
+    if (year) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-01-01`),
+        [Op.lte]: new Date(`${year}-12-31`),
+      };
+    }
+    if (month) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-${month}-01`),
+        [Op.lte]: new Date(`${year}-${month}-31`),
+      };
+    }
+
+    // Tambahkan kondisi untuk startDate dan endDate jika ada
     if (startDate && endDate) {
       whereCondition.incidentDate = {
         [Op.gte]: new Date(startDate),
