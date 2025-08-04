@@ -150,14 +150,29 @@ export default {
       };
     });
   },
-  async findAll({ page = 1, limit = 10, query = "", req } = {}) {
-    const sectionId = req.user?.sectionId || null;
+  async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
+    const { sectionId, lineId, roleName } = req.user?.sectionId || null;
     const { year, month, q } = query;
+    const sectionIdQuery = query.sectionId;
+    const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
     let whereCondition = {};
 
     if (sectionId) {
       whereCondition.sectionId = sectionId;
+    }
+
+    if (roleName === "line head") {
+      if (lineId) {
+        whereCondition.lineId = lineId;
+      }
+    }
+
+    if (sectionIdQuery) {
+      whereCondition.sectionId = sectionIdQuery;
+    }
+    if (lineIdQuery) {
+      whereCondition.lineId = lineIdQuery;
     }
 
     // Tambahkan kondisi untuk tahun dan bulan jika ada
@@ -196,7 +211,7 @@ export default {
       ],
       limit,
       offset,
-      order: [["id", "DESC"]],
+      order: [["id", order || "DESC"]],
     });
 
     if (!rows || rows.length === 0) {
@@ -522,32 +537,37 @@ export default {
   },
   async findAllGroupedByUserId(req, query) {
     const sectionId = req.user.sectionId;
-    const { type, q } = query;
+    const { type, year, month } = query;
     let whereCondition = {
       type: type || "",
       sectionId,
     };
 
-    // Tambahkan kondisi untuk userId jika ada
-    if (q) {
-      const userIds = await getUserIdsByNoregOrName(q);
-      whereCondition.userId = {
-        [Op.in]: userIds,
+    // Tambahkan kondisi untuk tahun dan bulan jika ada
+    if (year) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-01-01`),
+        [Op.lte]: new Date(`${year}-12-31`),
+      };
+    }
+    if (month) {
+      whereCondition.incidentDate = {
+        [Op.gte]: new Date(`${year}-${month}-01`),
+        [Op.lte]: new Date(`${year}-${month}-31`),
       };
     }
 
-    // const offset = (page - 1) * limit;
     const result = await Submission.findAll({
       where: whereCondition,
       attributes: [
         "userId",
-        "incidentDate",
         [
           Submission.sequelize.fn("COUNT", Submission.sequelize.col("userId")),
           "count",
         ],
       ],
-      group: ["userId", "incidentDate"],
+      group: ["userId"],
+      order: [["count", "DESC"]],
     });
 
     if (!result || result.length === 0) {
@@ -556,12 +576,12 @@ export default {
       throw err;
     }
 
-    // const lineIds = result.map((item) => item.lineId);
-    // const lines = await getLineByIds(lineIds);
+    const userIds = result.map((item) => item.userId);
+    const users = await getUserByIds(userIds);
 
     const data = result.map((item) => ({
       ...item.toJSON(),
-      // line: lines.find((line) => line.id === item.lineId) || null,
+      user: users.find((user) => user.id === item.userId) || null,
     }));
 
     return {

@@ -37,7 +37,7 @@ if (process.platform === "win32") {
   __dirname = __dirname.substring(1); // Removes extra leading slash on Windows
 }
 
-// Mengatur path untuk menyimpan gambar produk
+// Mengatur path untuk menyimpan gambar proof
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //==ROUTES==//

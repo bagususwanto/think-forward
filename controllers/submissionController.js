@@ -25,10 +25,12 @@ export default {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
       const query = req.query || "";
+      const order = "ASC"; // Default order
       const result = await submissionService.findAll({
         page,
         limit,
         query,
+        order,
         req,
       });
       return successResponse(res, {
