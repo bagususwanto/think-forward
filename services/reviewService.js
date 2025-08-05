@@ -96,9 +96,10 @@ export default {
     });
   },
   async createSolved(data, req) {
-    validateReviewSolved(data);
+    const dataParsed = JSON.parse(data.data);
+    validateReviewSolved(dataParsed);
     const { userId, roleName, lineId, sectionId } = req.user;
-    const submission = await Submission.findByPk(data.submissionId);
+    const submission = await Submission.findByPk(dataParsed.submissionId);
 
     if (!req.file) {
       throw new Error("File proof is required");
@@ -130,7 +131,7 @@ export default {
     // create review
     return sequelize.transaction(async () => {
       const review = await Review.create({
-        ...data,
+        ...dataParsed,
         feedback: "solved",
         proof: req.file.path,
         userId,
