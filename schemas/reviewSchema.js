@@ -19,5 +19,6 @@ export const reviewSolvedSchema = Joi.object({
 
 export const reviewRejectedSchema = Joi.object({
   submissionId: Joi.number().required(),
-  suggestion: Joi.string().required(),
+  suggestionGL: Joi.string().allow(""),
+  suggestionSH: Joi.string().allow(""),
 });
