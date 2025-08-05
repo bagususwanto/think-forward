@@ -60,6 +60,16 @@ export default {
       throw new Error("You are not in the correct organization");
     }
 
+    // jika role section head, suggestionSH is required
+    if (roleName === "section head" && !data.suggestionSH) {
+      throw new Error("Suggestion for Section Head is required");
+    }
+
+    // jika role line head, suggestionGL is required
+    if (roleName === "line head" && !data.suggestionGL) {
+      throw new Error("Suggestion for Group Leader is required");
+    }
+
     // check if submission is pending
     if (submission.status !== 0) {
       throw new Error("Submission is not pending");

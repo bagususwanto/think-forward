@@ -9,7 +9,8 @@ export const reviewCounterMeasureSchema = Joi.object({
   thirdParty: Joi.string(),
   actionPlan: Joi.date().required(),
   actionDate: Joi.date().required(),
-  suggestion: Joi.string().required(),
+  suggestionGL: Joi.string().allow(""),
+  suggestionSH: Joi.string().allow(""),
 }).unknown(false);
 
 export const reviewSolvedSchema = Joi.object({
