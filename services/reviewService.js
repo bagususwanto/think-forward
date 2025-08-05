@@ -100,6 +100,10 @@ export default {
     const { userId, roleName, lineId, sectionId } = req.user;
     const submission = await Submission.findByPk(data.submissionId);
 
+    if (!req.file) {
+      throw new Error("File proof is required");
+    }
+
     // check if submission exists
     if (!submission) {
       throw new Error("Submission not found");
@@ -128,7 +132,7 @@ export default {
       const review = await Review.create({
         ...data,
         feedback: "solved",
-        proof: data.proof,
+        proof: req.file.path,
         userId,
       });
 
