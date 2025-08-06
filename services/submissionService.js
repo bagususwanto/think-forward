@@ -169,6 +169,8 @@ export default {
     let whereCondition = {};
     let whereContionHazard = {};
     let whereConditionVoice = {};
+    let requiredHazard = false;
+    let requiredVoice = false;
 
     if (type) {
       whereCondition.type = type;
@@ -241,12 +243,19 @@ export default {
         };
       }
 
-      whereConditionVoice.issue = {
-        [Op.like]: `%${q}%`,
-      };
-      whereContionHazard.potentialHazard = {
-        [Op.like]: `%${q}%`,
-      };
+      if (type === "hyarihatto") {
+        requiredHazard = true;
+        whereConditionVoice.issue = {
+          [Op.like]: `%${q}%`,
+        };
+      }
+
+      if (type === "voice member") {
+        requiredVoice = true;
+        whereContionHazard.potentialHazard = {
+          [Op.like]: `%${q}%`,
+        };
+      }
     }
 
     const { count, rows } = await Submission.findAndCountAll({
@@ -255,10 +264,12 @@ export default {
         {
           model: HazardAssessment,
           where: whereContionHazard,
+          required: requiredHazard,
           attributes: ["potentialHazard"],
         },
         {
           model: VoiceMember,
+          required: requiredVoice,
           where: whereConditionVoice,
           attributes: ["issue"],
         },
