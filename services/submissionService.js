@@ -245,14 +245,14 @@ export default {
 
       if (type === "hyarihatto") {
         requiredHazard = true;
-        whereConditionVoice.issue = {
+        whereContionHazard.potentialHazard = {
           [Op.like]: `%${q}%`,
         };
       }
 
       if (type === "voice member") {
         requiredVoice = true;
-        whereContionHazard.potentialHazard = {
+        whereConditionVoice.issue = {
           [Op.like]: `%${q}%`,
         };
       }
