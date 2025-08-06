@@ -254,10 +254,12 @@ export default {
       include: [
         {
           model: HazardAssessment,
+          where: whereContionHazard,
           attributes: ["potentialHazard"],
         },
         {
           model: VoiceMember,
+          where: whereConditionVoice,
           attributes: ["issue"],
         },
       ],
