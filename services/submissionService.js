@@ -241,20 +241,20 @@ export default {
         whereCondition.userId = {
           [Op.in]: userIds,
         };
-      }
+      } else {
+        if (type === "hyarihatto") {
+          requiredHazard = true;
+          whereContionHazard.potentialHazard = {
+            [Op.like]: `%${q}%`,
+          };
+        }
 
-      if (type === "hyarihatto") {
-        requiredHazard = true;
-        whereContionHazard.potentialHazard = {
-          [Op.like]: `%${q}%`,
-        };
-      }
-
-      if (type === "voice member") {
-        requiredVoice = true;
-        whereConditionVoice.issue = {
-          [Op.like]: `%${q}%`,
-        };
+        if (type === "voice member") {
+          requiredVoice = true;
+          whereConditionVoice.issue = {
+            [Op.like]: `%${q}%`,
+          };
+        }
       }
     }
 
