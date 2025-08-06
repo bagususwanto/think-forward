@@ -167,6 +167,8 @@ export default {
     const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
     let whereCondition = {};
+    let whereContionHazard = {};
+    let whereConditionVoice = {};
 
     if (type) {
       whereCondition.type = type;
@@ -233,13 +235,32 @@ export default {
 
     if (q) {
       const userIds = await getUserIdsByNoregOrName(q);
-      whereCondition.userId = {
-        [Op.in]: userIds,
+      if (userIds.length > 0) {
+        whereCondition.userId = {
+          [Op.in]: userIds,
+        };
+      }
+
+      whereConditionVoice.issue = {
+        [Op.like]: `%${q}%`,
+      };
+      whereContionHazard.potentialHazard = {
+        [Op.like]: `%${q}%`,
       };
     }
 
     const { count, rows } = await Submission.findAndCountAll({
       where: whereCondition,
+      include: [
+        {
+          model: HazardAssessment,
+          attributes: ["potentialHazard"],
+        },
+        {
+          model: VoiceMember,
+          attributes: ["issue"],
+        },
+      ],
       limit,
       offset,
       order: [["id", order || "DESC"]],
