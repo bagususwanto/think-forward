@@ -276,7 +276,7 @@ export default {
       ],
       limit,
       offset,
-      order: [["id", order || "DESC"]],
+      order: [["incidentDate", order || "DESC"]],
     });
 
     if (!rows || rows.length === 0) {
