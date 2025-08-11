@@ -22,3 +22,8 @@ export const reviewRejectedSchema = Joi.object({
   suggestionGL: Joi.string().allow(""),
   suggestionSH: Joi.string().allow(""),
 });
+
+export const reviewSectionSuggestionSchema = Joi.object({
+  submissionId: Joi.number().required(),
+  suggestion: Joi.string().required(),
+}).unknown(false);

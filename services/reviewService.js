@@ -3,6 +3,7 @@ import {
   reviewCounterMeasureSchema,
   reviewSolvedSchema,
   reviewRejectedSchema,
+  reviewSectionSuggestionSchema,
 } from "../schemas/reviewSchema.js";
 import { logAction } from "./logService.js";
 
@@ -30,6 +31,17 @@ function validateReviewSolved(data) {
 
 function validateReviewRejected(data) {
   const { error } = reviewRejectedSchema.validate(data, {
+    abortEarly: false,
+  });
+  if (error) {
+    const err = new Error("Validation error");
+    err.details = error.details.map((d) => d.message);
+    throw err;
+  }
+}
+
+function validateReviewSectionSuggestion(data) {
+  const { error } = reviewSectionSuggestionSchema.validate(data, {
     abortEarly: false,
   });
   if (error) {
@@ -215,6 +227,42 @@ export default {
         newData: review.toJSON(),
         req,
       });
+      return review;
+    });
+  },
+  async createSectionSuggestion(data, req) {
+    validateReviewSectionSuggestion(data);
+    const { userId, roleName, sectionId } = req.user;
+    const submission = await Submission.findByPk(data.submissionId);
+
+    // check if submission exists
+    if (!submission) {
+      throw new Error("Submission not found");
+    }
+
+    // check if user is in organization
+    if (roleName === "section head" && submission.sectionId !== sectionId) {
+      throw new Error("You are not in the correct organization");
+    }
+
+    // create review
+    return sequelize.transaction(async () => {
+      const review = await Review.create({
+        ...data,
+        feedback: "section suggestion",
+        userId,
+      });
+
+      await logAction({
+        userId,
+        action: "create",
+        entity: "Review",
+        entityId: review.id,
+        previousData: null,
+        newData: review.toJSON(),
+        req,
+      });
+
       return review;
     });
   },

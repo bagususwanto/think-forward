@@ -24,5 +24,10 @@ router.post(
   roleMiddleware(["line head", "section head"]),
   reviewController.createRejected
 );
+router.post(
+  "/section-suggestion",
+  roleMiddleware(["section head"]),
+  reviewController.createSectionSuggestion
+);
 
 export default router;
