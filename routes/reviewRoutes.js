@@ -15,7 +15,7 @@ router.post(
 );
 router.post(
   "/solve",
-  roleMiddleware(["line head"]),
+  roleMiddleware(["line head", "section head"]),
   upload.single("image"),
   reviewController.createSolved
 );
