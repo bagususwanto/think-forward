@@ -161,12 +161,12 @@ export default {
     });
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
-    const { sectionId, lineId, roleName } = req.user || null;
+    const { sectionId } = req.user || null;
     const { type, status, year, month, q, shift, startDate, endDate } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
     const offset = (page - 1) * limit;
-    let whereCondition = {};
+    let whereCondition = { sectionId };
     let whereContionHazard = {};
     let whereConditionVoice = {};
     let requiredHazard = false;
@@ -182,20 +182,6 @@ export default {
 
     if (shift) {
       whereCondition.shift = shift;
-    }
-
-    if (
-      roleName === "section head" ||
-      roleName === "line head" ||
-      roleName === "group head"
-    ) {
-      if (sectionId) {
-        whereCondition.sectionId = sectionId;
-      }
-
-      if (lineId) {
-        whereCondition.lineId = lineId;
-      }
     }
 
     if (sectionIdQuery) {
