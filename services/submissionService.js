@@ -510,7 +510,7 @@ export default {
           "month",
         ],
         [
-          Submission.sequelize.fn("COUNT", Submission.sequelize.col("lineId")),
+          Submission.sequelize.fn("COUNT", Submission.sequelize.col("id")),
           "count",
         ],
       ],
