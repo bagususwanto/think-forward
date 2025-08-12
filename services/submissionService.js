@@ -531,7 +531,9 @@ export default {
 
     const data = result.map((item) => ({
       ...item.toJSON(),
-      line: lines.find((line) => line.id === item.lineId) || null,
+      line: lines.find((line) => line.id === item.lineId) || {
+        lineName: "Lainnya",
+      },
     }));
 
     return {
