@@ -161,7 +161,7 @@ export default {
     });
   },
   async findAll({ page = 1, limit = 10, query = "", order = "", req } = {}) {
-    const { sectionId } = req.user || null;
+    const { sectionId, roleName } = req.user || null;
     const { type, status, year, month, q, shift, startDate, endDate } = query;
     const sectionIdQuery = query.sectionId;
     const lineIdQuery = query.lineId;
@@ -171,6 +171,10 @@ export default {
     let whereConditionVoice = {};
     let requiredHazard = false;
     let requiredVoice = false;
+
+    if (roleName === "super admin") {
+      whereCondition = {};
+    }
 
     if (type) {
       whereCondition.type = type;
@@ -432,12 +436,16 @@ export default {
   },
 
   async findAllGroupedByStatus(req, q) {
-    const sectionId = req.user.sectionId;
+    const { sectionId, roleName } = req.user;
     const { type, year, month } = q;
     let whereCondition = {
       type: type || "",
       sectionId,
     };
+
+    if (roleName === "super admin") {
+      whereCondition = { type: type || "" };
+    }
 
     // Tambahkan kondisi untuk tahun dan bulan jika ada
     if (year) {
@@ -480,12 +488,16 @@ export default {
     };
   },
   async findAllGroupedByLine(req, q) {
-    const sectionId = req.user.sectionId;
+    const { sectionId, roleName } = req.user;
     const { type, year, month } = q;
     let whereCondition = {
       type: type || "",
       sectionId,
     };
+
+    if (roleName === "super admin") {
+      whereCondition = { type: type || "" };
+    }
 
     // Tambahkan kondisi untuk tahun dan bulan jika ada
     if (year) {
@@ -541,11 +553,15 @@ export default {
     };
   },
   async findAllGroupedByAccindentType(req, q) {
-    const sectionId = req.user.sectionId;
+    const { sectionId, roleName } = req.user;
     const { year, month } = q;
     let whereCondition = {
       sectionId,
     };
+
+    if (roleName === "super admin") {
+      whereCondition = {};
+    }
 
     // Tambahkan kondisi untuk tahun dan bulan jika ada
     if (year) {
@@ -592,12 +608,16 @@ export default {
     };
   },
   async findAllGroupedByUserId(req, query) {
-    const sectionId = req.user.sectionId;
+    const { sectionId, roleName } = req.user;
     const { type, year, month } = query;
     let whereCondition = {
       type: type || "",
       sectionId,
     };
+
+    if (roleName === "super admin") {
+      whereCondition = { type: type || "" };
+    }
 
     // Tambahkan kondisi untuk tahun dan bulan jika ada
     if (year) {
