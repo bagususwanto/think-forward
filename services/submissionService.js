@@ -341,6 +341,95 @@ export default {
     };
     return data;
   },
+  async findByNoreg({ page = 1, limit = 10, query = "", order = "" } = {}) {
+    const { type, status, q, noreg } = query;
+    const offset = (page - 1) * limit;
+    const user = await getUserIdsByNoregOrName(noreg);
+    if (user.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
+    const userId = user[0]; // ambil userId pertama
+
+    let whereCondition = { userId };
+    let whereContionHazard = {};
+    let whereConditionVoice = {};
+    let requiredHazard = false;
+    let requiredVoice = false;
+
+    if (type) {
+      whereCondition.type = type;
+    }
+
+    if (status) {
+      whereCondition.status = status;
+    }
+
+    if (q) {
+      if (type === "hyarihatto") {
+        requiredHazard = true;
+        whereContionHazard.potentialHazard = {
+          [Op.like]: `%${q}%`,
+        };
+      }
+
+      if (type === "voice member") {
+        requiredVoice = true;
+        whereConditionVoice.issue = {
+          [Op.like]: `%${q}%`,
+        };
+      }
+    }
+
+    const { count, rows } = await Submission.findAndCountAll({
+      where: whereCondition,
+      include: [
+        {
+          model: HazardAssessment,
+          where: whereContionHazard,
+          required: requiredHazard,
+          attributes: ["potentialHazard"],
+        },
+        {
+          model: VoiceMember,
+          required: requiredVoice,
+          where: whereConditionVoice,
+          attributes: ["issue"],
+        },
+      ],
+      limit,
+      offset,
+      order: [["incidentDate", order || "DESC"]],
+    });
+
+    if (!rows || rows.length === 0) {
+      const err = new Error("Data not found");
+      err.status = 404;
+      throw err;
+    }
+
+    const userIds = rows.map((submission) => submission.userId);
+    const lineIds = rows.map((submission) => submission.lineId);
+    const sectionIds = rows.map((submission) => submission.sectionId);
+    const users = await getUserByIds(userIds);
+    const lines = await getLineByIds(lineIds);
+    const sections = await getSectionByIds(sectionIds);
+    const data = rows.map((submission) => ({
+      ...submission.toJSON(),
+      line: lines.find((line) => line.id === submission.lineId) || null,
+      section:
+        sections.find((section) => section.id === submission.sectionId) || null,
+      user: users.find((user) => user.id === submission.userId) || null,
+    }));
+    return {
+      data,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+      limit,
+    };
+  },
   async findByOrganization(req, { page = 1, limit = 10, query } = {}) {
     const { lineId, sectionId, roleName } = req.user;
     const { type, q } = query;

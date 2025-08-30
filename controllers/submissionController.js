@@ -62,6 +62,33 @@ export default {
       next(err);
     }
   },
+  async findByNoreg(req, res, next) {
+    try {
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const query = req.query || "";
+      const order = "ASC"; // Default order
+      const result = await submissionService.findByNoreg({
+        page,
+        limit,
+        query,
+        order,
+        req,
+      });
+      return successResponse(res, {
+        message: "List of recent submissions",
+        data: result.data,
+        meta: {
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+          limit: result.limit,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   async findByOrganization(req, res, next) {
     try {
       const page = parseInt(req.query.page, 10) || 1;

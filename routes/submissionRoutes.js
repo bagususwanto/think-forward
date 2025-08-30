@@ -14,6 +14,7 @@ router.get(
   roleMiddleware(["group head", "line head", "section head"]),
   submissionController.findByOrganization
 );
+router.get("/member", submissionController.findByNoreg);
 router.get("/:id", submissionController.findById);
 router.patch("/:id", submissionController.update);
 
